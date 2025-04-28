@@ -1,0 +1,6 @@
+# https://sli.dev/guide/
+npm install create-slidev@51.6.0
+npm run dev
+# icons: copy/paste from https://twemoji-cheatsheet.vercel.app
+# icons: https://github.com/twitter/twemoji?tab=readme-ov-file#community-projects
+# https://roughnotation.com = markers

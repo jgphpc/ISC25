@@ -4,7 +4,7 @@
 theme: ./slidev-theme-cscs
 # theme: seriph
 # background: images/title-bg3.png
-title: 'CSCS: bla bla '
+title: 'ISC 2025 in-situ visualization workshop '
 info: |
   Presentation slides for the CSCS webinar.
 
@@ -33,10 +33,11 @@ hideInToc: true
 # background: /scorep/logo.png
 ---
 
-# Titre principal
+### Issues and challenges of deploying in-situ visualization for SPH codes
 
+Jean M. Favre and Jean-Guillaume Piccinali<br/><br/>
 Swiss National Supercomputing Centre (CSCS)<br/>
-15 June 2025<br/>
+13 June 2025<br/>
 
 
 ---
@@ -47,12 +48,6 @@ hideInToc: true
 
 # Outline
 
-<br>
-<br>
-<div class="flex justify-left">
-    <img src="/scorep/workflow.png" class="h-65" border="0px">
-</div>
-
 
 ::right::
 
@@ -61,7 +56,7 @@ hideInToc: true
 <Toc text-sm minDepth="1" maxDepth="1" column="2"/>
 
 ---
-src: ./src/scorep/scorep.md
+src: ./src/defs/defs.md
 hide: false
 ---
 

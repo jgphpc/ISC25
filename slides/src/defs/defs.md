@@ -14,15 +14,17 @@ layout: section
 - histsampling: selecting (sub-sampling) a particle cloud, while retaining regions of higher entropy
 - binning: doing queries such as min(), max(), etc on a set of variables
 
+<!-- {{{ AOS vs SOA -->
 
----
-layout: two-cols-header
-columns: is-two-quarters
----
-<! need padding between the 2 block ->
-# To be AOS or not to be (SOA)
-::left::
-```
+--- 
+
+## To be AOS or not to be (SOA)
+
+<br>
+<div class="grid grid-cols-[45%_55%] gap-2">
+<div> <!-- #left -->
+
+```cpp
 Array-of-Structures (AOS)
 
 struct tipsySph {
@@ -36,8 +38,10 @@ struct tipsySph {
 std::vector<tipsySph> scalarsAOS;
 int NbofScalarfields = sizeof(tipsySph)/sizeof(float);
 ```
-::right::
-```
+</div>
+
+<div> <!-- #right -->
+```cpp
 Structure-of-Arrays (SOA)
 
 {
@@ -50,13 +54,19 @@ std::vector<float> phi;
 }
 
 ```
+</div>
+</div>
+
+<!-- }}} -->
+
 ---
 
-# DummySPH: a mini-app with three in-situ visualization backends
+## DummySPH: a mini-app with three in-situ visualization backends
+
 https://github.com/jfavre/DummySPH
 <br>
 
-- LLNL <span v-mark.highlight.yellow>Ascent</span>
+- <div class="flex items-center gap-0">LLNL <span v-mark.highlight.yellow>Ascent</span> <img src="/src/images/ascent-logo.png" class="h-10 ml-1 mr-2"> </div>
 ```bash
 https://github.com/Alpine-DAV/ascent
 https://ascent.readthedocs.io/en/latest/index.html
@@ -64,17 +74,14 @@ https://ascent.readthedocs.io/en/latest/index.html
 
 <br>
 
-- Kitware <span v-mark.highlight.yellow>ParaView Catalyst</span>:
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+- <div class="flex items-center gap-0">Kitware <span v-mark.highlight.yellow>ParaView Catalyst</span> <img src="/src/images/pvcatalyst-logo.png" class="h-6 ml-1 mr-2"> </div>
 ```bash
 https://docs.paraview.org/en/latest/Catalyst/index.html
 ```
 
 <br>
 
-- <span v-mark.highlight.yellow>VTK-m:</span> 
-Accelerating the Visualization Toolkit for Massively Threaded
-Architectures
+- <div class="flex items-center gap-0"><span v-mark.highlight.yellow>VTK-m:</span> <img src="/src/images/vtkm-logo.svg" class="h-6 ml-1 mr-2"> Accelerating the Visualization Toolkit for Massively Threaded Architectures</div>
 ```bash
 https://gitlab.kitware.com/vtk/vtk-m
 https://vtk-m.readthedocs.io/en/stable/index.html
@@ -135,16 +142,18 @@ device_move(mesh["fields/rho/values"], data_nbytes);
 ---
 
 ### Device-resident support. Your mileage will vary
+
 - VTK-m does the best job
 - Ascent does slightly less 
 - Catalyst is at the proof-of-concept level
----
-layout: image-left
 
-image: ./src/images/superchip_logic_overview_1.png
 ---
-<! need to shrink image ->
-### Device-resident support: The special case of NVIDIA Grace-Hopper
+
+### Device-resident support: the special case of NVIDIA Grace-Hopper
+
+<div class="flex items-center gap-0">
+<img src="/src/images/superchip_logic_overview_1.png" class="h-99 ml-1 mr-2">
+</div>
 
 ---
 layout: section
@@ -152,16 +161,81 @@ layout: section
 
 # Some new material
 Derived quantities, e.g. evaluate radius = sqrt(x^2 + y^2 + z2)
+
 - Ascent uses OCCA
 - ParaView uses numpy
 <br>
+
+---
+
+###
+
+<div class="grid grid-cols-[50%_50%] gap-1">
+<div> <!-- #left -->
+
+### OpenMP code generation
+
+<Transform :scale="0.9">
+```cpp
+#include <occa.hpp>
+
+using namespace std;
+using namespace occa;
+
+extern "C" void map(double * output,
+                    const double * z,
+                    const double * x,
+                    const double * y,
+                    const int & entries) {
+#pragma omp parallel for
+  for (int group = 0; group < entries; group += 128) {
+    for (int item = group; item < (group + 128); ++item) {
+      if (item < entries) {
+        output[item] = sqrt(
+          (((x[item] * x[item]) + \
+            (y[item] * y[item])) + \
+            (z[item] * z[item]))
+        );
+      }
+    }
+  }
+}
+```
+</Transform>
+</div>
+
+<div> <!-- #right -->
+
+### CUDA code generation
+<Transform :scale="0.9">
+```cpp
+extern "C" __global__ void _occa_map_0(double * output,
+                                         const float * m,
+                                         const float * kx,
+                                         const float * xm,
+                                         const int entries) {
+  {
+    int group = 0 + (128 * blockIdx.x);
+    {
+      int item = group + threadIdx.x;
+      if (item < entries) {
+        output[item] = ((kx[item] * m[item]) / xm[item]);
+      }
+    }
+  }
+}
+```
+</Transform>
+</div>
+</div>
+
 ---
 layout: two-cols-header
 ---
 ::left::
 # OpenMP code generation
 
-```
+```cpp
 #include <occa.hpp>
 
 using namespace std;
@@ -188,7 +262,7 @@ extern "C" void map(double * output,
 ::right::
 
 # CUDA code generation
-```
+```cpp
 extern "C" __global__ void _occa_map_0(double * output,
                                          const float * m,
                                          const float * kx,

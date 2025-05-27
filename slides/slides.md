@@ -4,9 +4,9 @@
 theme: ./slidev-theme-cscs
 # theme: seriph
 # background: images/title-bg3.png
-title: 'ISC 2025 in-situ visualization workshop '
+title: 'ISC 2025 in-situ visualization workshop'
 info: |
-  Presentation slides for the CSCS webinar.
+  https://woiv.gitlab.io/woiv25/#program
 
   Sources available at https://github.com/jfavre/
 favicon: /images/cscs.ico
@@ -60,5 +60,3 @@ src: ./src/defs/defs.md
 hide: false
 ---
 
-# the end
----

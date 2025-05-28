@@ -61,7 +61,7 @@ std::vector<float> phi;
 
 ---
 
-## DummySPH: a mini-app with three in-situ visualization backends
+### DummySPH: a mini-app with three in-situ visualization backends
 
 https://github.com/jfavre/DummySPH
 <br>
@@ -92,7 +92,7 @@ https://vtk-m.readthedocs.io/en/stable/index.html
 
 - Conduit: A light-weight (mostly zero-copy pointers) description of the in-memory data, that serves as a Common Denominator to both the Ascent & ParaView Catalyst backends
 
-```
+```cpp
 #if defined(USE_CATALYST) || defined(USE_ASCENT)
 template<typename T>
 void addField(ConduitNode& mesh, const std::string& name, T* field, const size_t N)
@@ -107,7 +107,7 @@ ConduitNode  mesh;
 addField(mesh, "rho", sim->rho.data(), sim->n);
 ```
 - Custom (application specific data pointers) for VTK-m
-```
+```cpp
 vtkm::cont::DataSetBuilderExplicit dataSetBuilder;
 auto aos7 = vtkm::cont::make_ArrayHandle<T>(sim->rho, vtkm::CopyFlag::Off);
 dataSet.AddPointField("rho",  aos7);
@@ -121,7 +121,7 @@ dataSet.AddPointField("rho",  aos7);
 - DummySPH does a cudaMalloc() and cudaMemcpy(..., cudaMemcpyHostToDevice) after reading its initialization data
 
 <p class="text-sm ...">
-```ts {2,10,12}
+```cpp
 void
 device_move(conduit::Node &data, int data_nbytes)
 {
@@ -145,16 +145,72 @@ device_move(mesh["fields/rho/values"], data_nbytes);
 
 - VTK-m does the best job
 - Ascent does slightly less 
-- Catalyst is at the proof-of-concept level
+- Catalyst is at the proof-of-concept level, but there is one specific solution at CSCS...
 
 ---
 
 ### Device-resident support: the special case of NVIDIA Grace-Hopper
 
 <div class="flex items-center gap-0">
-<img src="/src/images/superchip_logic_overview_1.png" class="h-99 ml-1 mr-2">
+<img src="/src/images/superchip_logic_overview_1.png" class="h-79 ml-1 mr-2">
 </div>
+All CPUs and GPUs on the GH200 share a unified address space and support transparent fine grained access to all main memory on the system.
+---
 
+### Device-resident support: the special case of NVIDIA Grace-Hopper
+
+- NVIDIA's NVLink-C2C interconnect enables fast, low latency, and cache coherent interaction between different chiplets
+- Every Processing Unit (PU) has complete access to all main memory
+- Each GH200 is composed of two NUMA nodes
+
+- Memory allocated with host APIs like malloc(), new() and mmap() can be accessed by
+all CPUs and GPUs in the compute node
+- Memory allocated with cudaMalloc() cannot be accessed from the CPU and by other GPUs on the compute node
+
+- Placement of a memory page is decided by the NUMA node of the thread that first writes
+to it, not by the thread that allocates it.
+---
+
+### Application: source code changes to run with ParaView Catalyst
+- allocate memory on the host
+- first touch on the GPU-side
+- no need to copy from GPU to host when we trigger the in-situ visualizations
+---
+
+### Application: source code changes to run with ParaView Catalyst
+
+- We successfully transformed a CUDA-enabled mini-app to be able to use ParaView Catalyst
+
+```cpp
+
+-    double *x_host = malloc_host<double>(buffer_size);
+-    double *x0     = malloc_device<double>(buffer_size);
+-    double *x1     = malloc_device<double>(buffer_size);
++    //double *x_host = malloc_host<double>(buffer_size);
++    double *x0     = malloc_host<double>(buffer_size);
++    double *x1     = malloc_host<double>(buffer_size);
+```
+###################################################
+```cpp
+#ifdef USE_CATALYST
+           // must copy data to host since we're not using a CUDA-enabled Catalyst at this time
+-          copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
++          //copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
+           CatalystAdaptor::Execute(step, dt);
+ #endif
+```
+###################################################
+```cpp
+ template <typename T>
+ T* malloc_host(size_t N, T value=T()) {
+     T* ptr = (T*)(malloc(N*sizeof(T)));
+-    std::fill(ptr, ptr+N, value);
++    //std::fill(ptr, ptr+N, value);
+ 
+     return ptr;
+ }
+
+```
 ---
 layout: section
 ---
@@ -229,56 +285,7 @@ extern "C" __global__ void _occa_map_0(double * output,
 </div>
 </div>
 
----
-layout: two-cols-header
----
-::left::
-# OpenMP code generation
 
-```cpp
-#include <occa.hpp>
-
-using namespace std;
-using namespace occa;
-
-extern "C" void map(double * output,
-                    const double * z,
-                    const double * x,
-                    const double * y,
-                    const int & entries) {
-#pragma omp parallel for
-  for (int group = 0; group < entries; group += 128) {
-    for (int item = group; item < (group + 128); ++item) {
-      if (item < entries) {
-        output[item] = sqrt(
-          (((x[item] * x[item]) + (y[item] * y[item])) + (z[item] * z[item]))
-        );
-      }
-    }
-  }
-}
-```
-
-::right::
-
-# CUDA code generation
-```cpp
-extern "C" __global__ void _occa_map_0(double * output,
-                                         const float * m,
-                                         const float * kx,
-                                         const float * xm,
-                                         const int entries) {
-  {
-    int group = 0 + (128 * blockIdx.x);
-    {
-      int item = group + threadIdx.x;
-      if (item < entries) {
-        output[item] = ((kx[item] * m[item]) / xm[item]);
-      }
-    }
-  }
-}
-```
 ---
 
 ## Questions?

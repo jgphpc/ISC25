@@ -289,5 +289,105 @@ extern "C" __global__ void _occa_map_0(double * output,
 ---
 
 ## Questions?
+
+<!-- {{{ sphexa: baseline, hdf5, ascent -->
+
 ---
 
+## SPHEXA
+
+<div class="flex justify-left">
+  <img src="/src/images/sphexa_baseline_hdf5_ascent.png" class="h" border="1px">
+</div>
+
+<div class="flex justify-center">
+  <img src="/src/images/sphexa_cuda_memcpy_ascent.png" class="h-65" border="1px">
+</div>
+
+<!-- }}} -->
+<!-- {{{ nsys_gpu_memory sphexa -->
+
+---
+layout: two-cols-header
+---
+
+## SPHEXA without/with Ascent: GPU memory usage
+<br>
+
+`thresholding`: 48 cn, 10 iterations, -n2400 (H100/120GB), 55 billion particles, 87% of peak memory (95GB)
+<!--
+83 GB / 95 GB = 87%
+-->
+<!-- <small>$20.10^6$ particles, 20 iterations, insitu every 5 iteration</small> -->
+
+::left::
+
+<div class="flex justify-left">
+  <img src="/src/images/sphexa_nsys_gpu_memory+ascent.png" class="h" border="1px">
+</div>
+
+::right::
+
+<div class="flex justify-left">
+  <img src="/src/images/sphexa_nsys_gpu_memory-ascent.png" class="h ml-1" border="1px">
+</div>
+
+<br>
+<br>
+
+<!-- }}} -->
+<!-- {{{ nsys_gpu_memory dummysph -->
+
+---
+layout: two-cols-header
+---
+
+## DummySPH with Ascent: GPU memory usage
+<br>
+
+`thresholding`: single GPU (A100/80GB, H100/120GB), 
+<small>$20.10^6$ particles, 20 iterations, insitu every 5 iteration</small>
+
+<!-- 
+- OFF ON OFF ON
+- A100-SXM4-80GB, GH200/120GB=95GB
+- NsightSystems/2025.3.1.90
+infile1 = 'n052+ascent/3.csv' "1/8 million particles (max=%.2g bytes)" , STATS_max)
+infile2 = 'n066+ascent/3.csv' "1/4 million particles (max=%.2g bytes)" , STATS_max)
+infile3 = 'n083+ascent/3.csv' "1/2 million particles (max=%.2g bytes)" , STATS_max)
+infile4 = 'n105+ascent/3.csv' "1 million particles (max=%.2g bytes)" , STATS_max)
+infile5 = 'n132+ascent/3.csv' "2 million particles (max=%.2g bytes)" , STATS_max)
+infile6 = 'n167+ascent/3.csv' "4 million particles (max=%.2g bytes)" , STATS_max)
+infile7 = 'n210+ascent/3.csv' "10 million particles (max=%.2g bytes)" , STATS_max)
+infile8 = 'n265+ascent/3.csv' "20 million particles (max=%.2g bytes)" , STATS_max)
+
+./sqlite3 nsys_log.sqlite "SELECT * FROM ENUM_CUDA_MEM_KIND" # <-- memKind
+0|CUDA_MEMOPR_MEMORY_KIND_PAGEABLE|Pageable
+1|CUDA_MEMOPR_MEMORY_KIND_PINNED|Pinned
+2|CUDA_MEMOPR_MEMORY_KIND_DEVICE|Device
+3|CUDA_MEMOPR_MEMORY_KIND_ARRAY|Array
+4|CUDA_MEMOPR_MEMORY_KIND_MANAGED|Managed
+5|CUDA_MEMOPR_MEMORY_KIND_DEVICE_STATIC|Device Static
+6|CUDA_MEMOPR_MEMORY_KIND_MANAGED_STATIC|Managed Static
+7|CUDA_MEMOPR_MEMORY_KIND_UNKNOWN|Unknown
+-->
+
+::left::
+
+<!-- - <small><span v-mark.underline.yellow>Stop on CUDA kernel launch</span>:<br></small> -->
+
+<div class="flex justify-left">
+  <img src="/src/images/dummysph_nsys_gpu_memory_A100.svg" class="h" border="1px">
+</div>
+
+::right::
+
+<div class="flex justify-left">
+  <img src="/src/images/dummysph_nsys_gpu_memory_H100.svg" class="h ml-1" border="1px">
+</div>
+
+<br>
+<br>
+
+
+<!-- }}} -->

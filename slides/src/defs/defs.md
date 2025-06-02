@@ -2,20 +2,14 @@
 layout: section
 ---
 
-# Testing multiple visualization filters/algorithm in-situ
+# Smoothed Particle Hydrodynamics (SPH)
 
----
 
-## Definitions
+- Based on a purely Lagrangian technique,
+SPH particles are free to move with fluids or deforming solid structures.
 
-- rendering: making an image of a [subset] of the particle cloud
-- thresholding: selecting all particles given a threshold value on a variable. If thresholding against a coordinate component => spatial clipping
-- compositing: making a vector-variable (e.g. velocity) from independent components (e.g. vx, vy, vz)
-- histsampling: selecting (sub-sampling) a particle cloud, while retaining regions of higher entropy
-- binning: doing queries such as min(), max(), etc on a set of variables
-
-<!-- {{{ AOS vs SOA -->
-
+- A stimulating field of research to simulate free-surface flows, solid
+mechanics, multi-phase, fluid-structure interaction and astrophysics.
 --- 
 
 ## To be AOS or not to be (SOA)
@@ -28,12 +22,12 @@ layout: section
 Array-of-Structures (AOS)
 
 struct tipsySph {
-   float mass;
-   float positions[3];
-   float velocities[3];
-   float density;
-   float temperature;
-   float phi;
+    float mass;
+    float positions[3];
+    float velocities[3];
+    float density;
+    float temperature;
+    float phi;
 }
 std::vector<tipsySph> scalarsAOS;
 int NbofScalarfields = sizeof(tipsySph)/sizeof(float);
@@ -45,30 +39,53 @@ int NbofScalarfields = sizeof(tipsySph)/sizeof(float);
 Structure-of-Arrays (SOA)
 
 {
-std::vector<float> mass;
-std::vector<float> posx, posy, posz;
-std::vector<float> velx, vely, velz;
-std::vector<float> density;
-std::vector<float> temperature;
-std::vector<float> phi;
+    std::vector<float> mass;
+    std::vector<float> posx, posy, posz;
+    std::vector<float> velx, vely, velz;
+    std::vector<float> density;
+    std::vector<float> temperature;
+    std::vector<float> phi;
 }
-
 ```
 </div>
 </div>
 
-<!-- }}} -->
-
 ---
 
-### DummySPH: a mini-app with three in-situ visualization backends
+# Testing multiple visualization algorithms in-situ
+
+<div class="grid grid-cols-[50%_50%]">
+<div> <!-- #left -->
+<img src="/src/images/left.png" style="width: 5vw; min-width: 200px;">
+<img src="/src/images/density_minmax.png" style="width: 10vw; min-width: 300px;">
+</div>
+<div> <!-- #right -->
+<img src="/src/images/HistSampling.png" style="width: 15vw; min-width: 350px;">
+<img src="/src/images/pdf.png" style="width: 10vw; min-width: 300px;">
+</div>
+</div>
+<br>
+---
+
+## Definitions
+
+- rendering: making an image of a [subset] of the particle cloud
+- thresholding: selecting all particles given a threshold value on a variable. If thresholding against a coordinate component => spatial clipping
+- compositing: making a vector-variable (e.g. velocity) from independent components (e.g. vx, vy, vz)
+- histsampling: selecting (sub-sampling) a particle cloud, while retaining regions of higher entropy
+- binning: doing queries such as min(), max(), etc on a set of variables
+
+
+---
+layout: section
+---
+# DummySPH: testing three visualization backends
 
 https://github.com/jfavre/DummySPH
 <br>
 
 - <div class="flex items-center gap-0">LLNL <span v-mark.highlight.yellow>Ascent</span> <img src="/src/images/ascent-logo.png" class="h-10 ml-1 mr-2"> </div>
 ```bash
-https://github.com/Alpine-DAV/ascent
 https://ascent.readthedocs.io/en/latest/index.html
 ```
 
@@ -83,9 +100,24 @@ https://docs.paraview.org/en/latest/Catalyst/index.html
 
 - <div class="flex items-center gap-0"><span v-mark.highlight.yellow>VTK-m:</span> <img src="/src/images/vtkm-logo.svg" class="h-6 ml-1 mr-2"> Accelerating the Visualization Toolkit for Massively Threaded Architectures</div>
 ```bash
-https://gitlab.kitware.com/vtk/vtk-m
 https://vtk-m.readthedocs.io/en/stable/index.html
 ```
+---
+
+# Execution mode
+
+- <strong>Application-aware</strong> coupling
+- <strong>On Node</strong> memory access
+- <strong>Time Division</strong>
+- <strong>Automatic and Adaptive</strong> control
+
+<br>
+<br>
+
+
+<em>Childs, H., et al.: A terminology for in situ visualization and analysis systems.
+The International Journal of High Performance Computing Applications, 34(6),
+676–691. https://doi.org/10.1177/1094342020935991</em>
 ---
 
 # Describing data (sharing memory pointers)
@@ -104,7 +136,7 @@ void addField(ConduitNode& mesh, const std::string& name, T* field, const size_t
 }
 
 ConduitNode  mesh;
-addField(mesh, "rho", sim->rho.data(), sim->n);
+addField(mesh, "rho", sim->rho.data(), sim->n);     // use the raw memory pointer to the individual scalar field
 ```
 - Custom (application specific data pointers) for VTK-m
 ```cpp
@@ -113,6 +145,39 @@ auto aos7 = vtkm::cont::make_ArrayHandle<T>(sim->rho, vtkm::CopyFlag::Off);
 dataSet.AddPointField("rho",  aos7);
 ```
 <br>
+
+---
+
+## What works and what doesn't work (SOA) SPH-EXA
+<style scoped>
+table {
+  font-size: 13px;
+}
+</style>
+| <strong>PKDGRAV3</strong> | <strong>VTK-m</strong> | <strong>Ascent</strong> | <strong>ParaView Catalyst</strong> |
+| -------- | :-------: | :--------: | :-------: |
+| in-situ rendering | yes, but parallel image compositing missing | yes, with parallel image compositing | idem|
+| Geometric clipping | yes |yes | yes, but with a VTK to VTK-m dataset conversion |
+| composing vectors | yes |yes | doable but  "very expensive" |
+| Data binning | n.a. | float64 OK <br> float32 not OK | n.a. |
+| Histogram sampling | yes | yes | n.a. |
+
+---
+
+## What works and what doesn't work (AOS) PKDGRAV3
+
+<style scoped>
+table {
+  font-size: 13px;
+}
+</style>
+| <strong>PKDGRAV3</strong> | <strong>VTK-m</strong> | <strong>Ascent</strong> | <strong>ParaView Catalyst</strong> |
+| -------- | :-------: | :--------: | :-------: |
+| in-situ rendering | yes | failing, although Data saving works | stride is not correct|
+| Geometric clipping | yes | yes | idem as above |
+| composing vectors | yes |"composite_vector" failing | idem as above |
+| Data binning | n.a. | float64 OK <br> float32 not OK | n.a. |
+| Histogram sampling | yes | failing | n.a. |
 
 ---
 

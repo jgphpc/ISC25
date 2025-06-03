@@ -165,7 +165,7 @@ table {
 | in-situ rendering | ✅ yes, but parallel image compositing missing | ✅ yes, with parallel image compositing | idem |
 | Geometric clipping | ✅ yes | ✅ yes | ✅ yes, but with a VTK to VTK-m dataset conversion |
 | composing vectors | ✅ yes | ✅ yes | doable but  "very expensive" |
-| Data binning | n.a. | float64 OK <br> float32 not OK | ⛔️ n.a. |
+| Data binning | ⛔️ n.a. | float64 ✅ OK <br> float32 ❌ not OK | ⛔️ n.a. |
 | Histogram sampling | ✅ yes | ✅ yes | ⛔️ n.a. |
 
 ---
@@ -427,28 +427,22 @@ pythonCalculator1.Set(
 ---
 
 ## Production runs with SPH-EXA
-<div class="grid grid-cols-[50%_50%] gap-1">
-<div> <!-- #left -->
+<br>
+
+<div class="flex justify-left">
+  <img src="/src/images/density301.01000.png" class="h-42 ml-1">
+  <img src="/src/images/density301.02500.png" class="h-42 ml-1">
+  <img src="/src/images/density301.03500.png" class="h-42 ml-1">
+  <!-- <img src="/src/images/density301.01000.png" style="width: 10vw; min-width: 250px;"> -->
+  <!-- <img src="/src/images/density301.02500.png" style="width: 10vw; min-width: 250px;"> -->
+  <!-- <img src="/src/images/density301.03500.png" style="width: 10vw; min-width: 250px;"> -->
+</div>
+<br>
 
 - Testing at scale with DummySPH and SPH-EXA ( with CUDA )
 - Testing two classes of GPU (A100 and H100)
-- Memory consumption checked with NVIDIA's nsys
-</div>
+- Memory consumption checked with NVIDIA\'s nsys
 
-<div> <!-- #right -->
-<div class="flex justify-right">
-  <img src="/src/images/density301.01000.png" style="width: 10vw; min-width: 250px;">
-</div>
-
-<div class="flex justify-right">
-  <img src="/src/images/density301.02500.png" style="width: 10vw; min-width: 250px;">
-</div>
-
-<div class="flex justify-right">
-  <img src="/src/images/density301.03500.png" style="width: 10vw; min-width: 250px;">
-</div>
-</div>
-</div>
 ---
 
 ## SPHEXA

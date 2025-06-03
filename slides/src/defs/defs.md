@@ -68,13 +68,15 @@ Structure-of-Arrays (SOA)
 ---
 
 ## Definitions
+<br>
 
 - rendering: making an image of a [subset] of the particle cloud
+<br>
+
 - thresholding: selecting all particles given a threshold value on a variable. If thresholding against a coordinate component => spatial clipping
 - compositing: making a vector-variable (e.g. velocity) from independent components (e.g. vx, vy, vz)
 - histsampling: selecting (sub-sampling) a particle cloud, while retaining regions of higher entropy
 - binning: doing queries such as min(), max(), etc on a set of variables
-
 
 ---
 layout: section
@@ -105,6 +107,7 @@ https://vtk-m.readthedocs.io/en/stable/index.html
 ---
 
 # Execution mode
+<br> <br>
 
 - <strong>Application-aware</strong> coupling
 - <strong>On Node</strong> memory access
@@ -138,6 +141,7 @@ void addField(ConduitNode& mesh, const std::string& name, T* field, const size_t
 ConduitNode  mesh;
 addField(mesh, "rho", sim->rho.data(), sim->n);     // use the raw memory pointer to the individual scalar field
 ```
+
 - Custom (application specific data pointers) for VTK-m
 ```cpp
 vtkm::cont::DataSetBuilderExplicit dataSetBuilder;
@@ -149,22 +153,25 @@ dataSet.AddPointField("rho",  aos7);
 ---
 
 ## What works and what doesn't work (SOA) SPH-EXA
+<br>
+
 <style scoped>
 table {
   font-size: 13px;
 }
 </style>
-| <strong>PKDGRAV3</strong> | <strong>VTK-m</strong> | <strong>Ascent</strong> | <strong>ParaView Catalyst</strong> |
+| <strong>SPHEXA</strong> | <strong>VTK-m</strong> | <strong>Ascent</strong> | <strong>ParaView Catalyst</strong> |
 | -------- | :-------: | :--------: | :-------: |
-| in-situ rendering | yes, but parallel image compositing missing | yes, with parallel image compositing | idem|
-| Geometric clipping | yes |yes | yes, but with a VTK to VTK-m dataset conversion |
-| composing vectors | yes |yes | doable but  "very expensive" |
-| Data binning | n.a. | float64 OK <br> float32 not OK | n.a. |
-| Histogram sampling | yes | yes | n.a. |
+| in-situ rendering | ✅ yes, but parallel image compositing missing | ✅ yes, with parallel image compositing | idem |
+| Geometric clipping | ✅ yes | ✅ yes | ✅ yes, but with a VTK to VTK-m dataset conversion |
+| composing vectors | ✅ yes | ✅ yes | doable but  "very expensive" |
+| Data binning | n.a. | float64 OK <br> float32 not OK | ⛔️ n.a. |
+| Histogram sampling | ✅ yes | ✅ yes | ⛔️ n.a. |
 
 ---
 
 ## What works and what doesn't work (AOS) PKDGRAV3
+<br>
 
 <style scoped>
 table {
@@ -173,11 +180,11 @@ table {
 </style>
 | <strong>PKDGRAV3</strong> | <strong>VTK-m</strong> | <strong>Ascent</strong> | <strong>ParaView Catalyst</strong> |
 | -------- | :-------: | :--------: | :-------: |
-| in-situ rendering | yes | failing, although Data saving works | stride is not correct|
-| Geometric clipping | yes | yes | idem as above |
-| composing vectors | yes |"composite_vector" failing | idem as above |
-| Data binning | n.a. | float64 OK <br> float32 not OK | n.a. |
-| Histogram sampling | yes | failing | n.a. |
+| in-situ rendering | ✅ yes | ❌ failing, although Data saving works | stride is not correct|
+| Geometric clipping | ✅ yes | ✅ yes | idem as above |
+| composing vectors | ✅ yes | ❌ "composite_vector" failing | idem as above |
+| Data binning | ⛔️ n.a. | float64 ✅ OK <br> float32 ❌ not OK | ⛔️ n.a. |
+| Histogram sampling | ✅ yes | ❌ failing | ⛔️ n.a. |
 
 ---
 
@@ -207,9 +214,12 @@ device_move(mesh["fields/rho/values"], data_nbytes);
 ---
 
 ### Device-resident support. Your mileage will vary
+<br>
 
-- VTK-m does the best job
+- VTK-m does the best job 🥇
+
 - Ascent does slightly less 
+
 - Catalyst is at the proof-of-concept level, but there is one specific solution at CSCS...
 
 ---
@@ -221,15 +231,21 @@ layout: section
 ---
 ### Device-resident support: the special case of NVIDIA Grace-Hopper
 
-<div class="flex items-center gap-0">
+<div class="flex justify-center">
 <img src="/src/images/superchip_logic_overview_1.png" class="h-79 ml-1 mr-2">
 </div>
-All CPUs and GPUs on the GH200 share a unified address space and support transparent fine grained access to all main memory on the system.
+
+<div class="flex justify-center">
+All CPUs and GPUs on the GH200 share a unified address space, and<br>
+support transparent fine grained access to all main memory on the system.
+</div>
+
 ---
 
 ### Device-resident support: the special case of NVIDIA Grace-Hopper
+<br>
 
-- NVIDIA's NVLink-C2C interconnect enables fast, low latency, and <span v-mark.highlight.yellow>cache coherent interaction</span> between different chiplets
+- NVIDIA\'s NVLink-C2C interconnect enables fast, low latency, and <span v-mark.highlight.yellow>cache coherent interaction</span> between different chiplets
 - Every Processing Unit (PU) has complete access to all main memory
 - Each GH200 is composed of two NUMA nodes
 - Memory allocated with malloc(), new() and mmap() <span v-mark.highlight.yellow>can be accessed by all CPUs and GPUs </span> in the compute node
@@ -239,15 +255,18 @@ to it</span>, not by the thread that allocates it.
 ---
 
 ### Application: source code changes to run with ParaView Catalyst
+<br>
+
 - allocate memory on the host
 - first touch on the GPU-side
 - no need to copy from GPU to host when we trigger the in-situ visualizations
+
 ---
 
 ### Application: source code changes to run with ParaView Catalyst
+<br>
 
 - We successfully transformed a CUDA-enabled mini-app to be able to use ParaView Catalyst
-
 ```cpp
 
 -    double *x_host = malloc_host<double>(buffer_size);
@@ -257,16 +276,14 @@ to it</span>, not by the thread that allocates it.
 +    double *x0     = malloc_host<double>(buffer_size);
 +    double *x1     = malloc_host<double>(buffer_size);
 ```
-###################################################
 ```cpp
 #ifdef USE_CATALYST
-           // must copy data to host since we're not using a CUDA-enabled Catalyst at this time
--          copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
-+          //copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
-           CatalystAdaptor::Execute(step, dt);
+     // must copy data to host since we are not using a CUDA-enabled Catalyst at this time
+-    copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
++    //copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
+     CatalystAdaptor::Execute(step, dt);
  #endif
 ```
-###################################################
 ```cpp
  template <typename T>
  T* malloc_host(size_t N, T value=T()) {
@@ -285,8 +302,10 @@ Example: Calculate a Probability Density Function, e.g. evaluate radius = sqrt(x
 
 - Ascent uses OCCA
 - ParaView uses numpy
+<div class="flex justify-center">
 <img src="/src/images/pdf.png" style="width: 25vw; min-width: 300px;">
 <br>
+</div>
 
 ---
 
@@ -296,6 +315,7 @@ Example: Calculate a Probability Density Function, e.g. evaluate radius = sqrt(x
 <div> <!-- #left -->
 
 ### OpenMP code generation
+<br>
 
 <Transform :scale="0.9">
 ```cpp
@@ -329,6 +349,8 @@ extern "C" void map(double * output,
 <div> <!-- #right -->
 
 ### CUDA code generation
+<br>
+
 <Transform :scale="0.9">
 ```cpp
 extern "C" __global__ void _occa_map_0(double * output,
@@ -350,6 +372,10 @@ extern "C" __global__ void _occa_map_0(double * output,
     }
   }
 }
+
+
+
+...
 ```
 </Transform>
 </div>

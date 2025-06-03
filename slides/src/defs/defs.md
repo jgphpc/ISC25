@@ -15,7 +15,7 @@ mechanics, multi-phase, fluid-structure interaction and astrophysics.
 ## To be AOS or not to be (SOA)
 
 <br>
-<div class="grid grid-cols-[45%_55%] gap-2">
+<div class="grid grid-cols-[50%_50%] gap-2">
 <div> <!-- #left -->
 
 ```cpp
@@ -290,7 +290,6 @@ to it</span>, not by the thread that allocates it.
      T* ptr = (T*)(malloc(N*sizeof(T)));
 -    std::fill(ptr, ptr+N, value);
 +    //std::fill(ptr, ptr+N, value);
- 
      return ptr;
  }
 
@@ -427,10 +426,29 @@ pythonCalculator1.Set(
 
 ---
 
-## Questions?
+## Production runs with SPH-EXA
+<div class="grid grid-cols-[50%_50%] gap-1">
+<div> <!-- #left -->
 
-<!-- {{{ sphexa: baseline, hdf5, ascent -->
+- Testing at scale with DummySPH and SPH-EXA ( with CUDA )
+- Testing two classes of GPU (A100 and H100)
+- Memory consumption checked with NVIDIA's nsys
+</div>
 
+<div> <!-- #right -->
+<div class="flex justify-right">
+  <img src="/src/images/density301.01000.png" style="width: 10vw; min-width: 250px;">
+</div>
+
+<div class="flex justify-right">
+  <img src="/src/images/density301.02500.png" style="width: 10vw; min-width: 250px;">
+</div>
+
+<div class="flex justify-right">
+  <img src="/src/images/density301.03500.png" style="width: 10vw; min-width: 250px;">
+</div>
+</div>
+</div>
 ---
 
 ## SPHEXA
@@ -527,6 +545,17 @@ infile8 = 'n265+ascent/3.csv' "20 million particles (max=%.2g bytes)" , STATS_ma
 
 <br>
 <br>
+---
 
+## Summary
+
+<!-- {{{ sphexa: baseline, hdf5, ascent -->
+
+
+---
+
+## Questions?
+
+<!-- {{{ sphexa: baseline, hdf5, ascent -->
 
 <!-- }}} -->

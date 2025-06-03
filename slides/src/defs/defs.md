@@ -443,9 +443,11 @@ pythonCalculator1.Set(
 - Testing two classes of GPU (A100 and H100)
 - Memory consumption checked with NVIDIA\'s nsys
 
+
+<!-- {{{ nsys_gpu_memory sphexa hdf5 vs ascent -->
 ---
 
-## SPHEXA
+## SPH-EXA
 
 <div class="flex justify-left">
   <img src="/src/images/sphexa_baseline_hdf5_ascent.png" class="h" border="1px">
@@ -465,7 +467,7 @@ layout: two-cols-header
 ## SPHEXA without/with Ascent: GPU memory usage
 <br>
 
-`thresholding`: 48 cn, 10 iterations, -n2400 (H100/120GB), 55 billion particles, 87% of peak memory (95GB)
+`thresholding`: 48 cn, 10 iterations, 1 H100/95GB <del>120GB</del>, 55 billion particles, 87% of peak memory (95GB)
 <!--
 83 GB / 95 GB = 87%
 -->
@@ -485,6 +487,24 @@ layout: two-cols-header
 
 <br>
 <br>
+
+<!--
+The wind-cloud collision test shows the interactions between a supersonic wind
+and a dense, cold spherical cloud. It is a challenging test for SPH, involving
+strong shocks and mixing due to the Kelvin-Helmholtz instability in a two-phase
+medium with a large density contrast.
+
+The figures show the time evolution of the particle distribution of the density
+in a thin slice. The Kelvin-Helmoltz billows (a large undulating mass of
+something, typically cloud) are able to develop, mix and eventually destroy the
+cloud.
+
+We simulated this test with a total number of 55 billion global particles, 
+arranged in four blocks of 2400^3 particles each, with one block containing a
+cavity for the high-density cloud.
+
+# https://www.aanda.org/articles/aa/full_html/2022/03/aa41877-21/aa41877-21.html
+-->
 
 <!-- }}} -->
 <!-- {{{ nsys_gpu_memory dummysph -->

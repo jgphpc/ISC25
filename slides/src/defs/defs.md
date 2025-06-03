@@ -443,9 +443,23 @@ pythonCalculator1.Set(
 - Testing two classes of GPU (A100 and H100)
 - Memory consumption checked with NVIDIA\'s nsys
 
+<!--
+The wind-cloud collision test shows the interactions between a supersonic wind
+and a dense, cold spherical cloud. 
+
+It is a challenging test for SPH, involving strong shocks and mixing due to the
+Kelvin-Helmholtz instability in a two-phase medium with a large density
+contrast.
+
+The figures show the time evolution of the particle distribution of the density
+in a thin slice. Instabilities are able to develop, mix and eventually destroy
+the cloud.
+-->
+
+
 ---
 
-## SPHEXA
+## SPH-EXA
 
 <div class="flex justify-left">
   <img src="/src/images/sphexa_baseline_hdf5_ascent.png" class="h" border="1px">
@@ -455,8 +469,17 @@ pythonCalculator1.Set(
   <img src="/src/images/sphexa_cuda_memcpy_ascent.png" class="h-65" border="1px">
 </div>
 
-<!-- }}} -->
-<!-- {{{ nsys_gpu_memory sphexa -->
+<!--
+We simulated this test with a total number of 55 billion global particles, 
+arranged in four blocks of 2400^3 particles each, with one block containing a
+cavity for the high-density cloud.
+
+<br>
+<br>
+<br>
+
+- https://www.aanda.org/articles/aa/full_html/2022/03/aa41877-21/aa41877-21.html
+-->
 
 ---
 layout: two-cols-header
@@ -465,10 +488,8 @@ layout: two-cols-header
 ## SPHEXA without/with Ascent: GPU memory usage
 <br>
 
-`thresholding`: 48 cn, 10 iterations, -n2400 (H100/120GB), 55 billion particles, 87% of peak memory (95GB)
-<!--
-83 GB / 95 GB = 87%
--->
+`thresholding`: 48 cn, 10 iterations, 1 H100/95GB <del>120GB</del>, 55 billion particles, 87% of peak memory (95GB)
+<!-- 83 GB / 95 GB = 87% -->
 <!-- <small>$20.10^6$ particles, 20 iterations, insitu every 5 iteration</small> -->
 
 ::left::
@@ -485,9 +506,6 @@ layout: two-cols-header
 
 <br>
 <br>
-
-<!-- }}} -->
-<!-- {{{ nsys_gpu_memory dummysph -->
 
 ---
 layout: two-cols-header
@@ -543,13 +561,6 @@ infile8 = 'n265+ascent/3.csv' "20 million particles (max=%.2g bytes)" , STATS_ma
 
 ## Summary
 
-<!-- {{{ sphexa: baseline, hdf5, ascent -->
-
-
 ---
 
 ## Questions?
-
-<!-- {{{ sphexa: baseline, hdf5, ascent -->
-
-<!-- }}} -->

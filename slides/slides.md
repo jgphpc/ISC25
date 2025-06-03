@@ -35,10 +35,12 @@ hideInToc: true
 
 ### Issues and challenges of deploying in-situ visualization for SPH codes
 
-Jean M. Favre and Jean-Guillaume Piccinali<br/><br/>
-Swiss National Supercomputing Centre (CSCS)<br/>
-13 June 2025<br/>
+Jean M. Favre and Jean-Guillaume Piccinali<br>
+Swiss National Supercomputing Centre (CSCS)<br>
 
+WOIV\'25, 9th International Workshop on In Situ Visualization,
+ https://woiv.gitlab.io/woiv25<br>
+13th June 2025
 
 ---
 layout: two-cols

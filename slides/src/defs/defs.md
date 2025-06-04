@@ -256,11 +256,22 @@ to it</span>, not by the thread that allocates it.
 
 ### Application: source code changes to run with ParaView Catalyst
 <br>
-
-- allocate memory on the host
-- first touch on the GPU-side
+<div class="grid grid-cols-[55%_45%]">
+<div> <!-- #left -->
+- allocate memory on the host <br>
+- first touch on the GPU-side <br>
 - no need to copy from GPU to host when we trigger the in-situ visualizations
+<br>
+<br>
+- we instrumented a CUDA simulator for the 2D heat diffusion equation
+</div>
 
+<div> <!-- #right -->
+
+<img src="/src/images/catalyst_temperature040000.png" style="width: 35vw; min-width: 300px;">
+<br>
+</div>
+</div>
 ---
 
 ### Application: source code changes to run with ParaView Catalyst

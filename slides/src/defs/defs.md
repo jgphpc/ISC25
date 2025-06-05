@@ -4,12 +4,17 @@ layout: section
 
 # Smoothed Particle Hydrodynamics (SPH)
 
-
 - Based on a purely Lagrangian technique,
 SPH particles are free to move with fluids or deforming solid structures.
 
 - A stimulating field of research to simulate free-surface flows, solid
 mechanics, multi-phase, fluid-structure interaction and astrophysics.
+
+- Supporting two SPH codes in production mode at CSCS:
+
+        - SPH-EXA: https://github.com/sphexa-org/sphexa
+        - PKDGRAV3: https://bitbucket.org/dpotter/pkdgrav3
+
 --- 
 
 ## To be AOS or not to be (SOA)
@@ -95,7 +100,7 @@ https://ascent.readthedocs.io/en/latest/index.html
 
 - <div class="flex items-center gap-0">Kitware <span v-mark.highlight.yellow>ParaView Catalyst</span> <img src="/src/images/pvcatalyst-logo.png" class="h-6 ml-1 mr-2"> </div>
 ```bash
-https://docs.paraview.org/en/latest/Catalyst/index.html
+https://kitware.github.io/paraview-catalyst/
 ```
 
 <br>

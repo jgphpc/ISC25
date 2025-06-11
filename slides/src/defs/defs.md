@@ -541,9 +541,8 @@ layout: two-cols-header
 ## SPHEXA without/with Ascent: GPU memory usage
 <br>
 
-`thresholding`: 48 cn, 10 iterations, 1 H100/95GB <del>120GB</del>, 55 billion particles, 87% of peak memory (95GB)
+`thresholding`: 192 H100 GPUs, $55.10^9$ particles, insitu every iteration, 87% of GPU peak memory (95GB)
 <!-- 83 GB / 95 GB = 87% -->
-<!-- <small>$20.10^6$ particles, 20 iterations, insitu every 5 iteration</small> -->
 
 ::left::
 
@@ -568,7 +567,8 @@ layout: two-cols-header
 <br>
 
 `thresholding`: single GPU (A100/80GB, H100/120GB), 
-<small>$20.10^6$ particles, 20 iterations, insitu every 5 iteration</small>
+$20.10^6$ particles, 20 iterations, insitu every 5 iteration
+<!-- <small>$20.10^6$ particles, 20 iterations, insitu every 5 iteration</small> -->
 
 <!-- 
 - OFF ON OFF ON

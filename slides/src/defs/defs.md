@@ -615,10 +615,16 @@ infile8 = 'n265+ascent/3.csv' "20 million particles (max=%.2g bytes)" , STATS_ma
 # Summary
 
 * SPH-EXA runs in production mode with CUDA-enabled ascent (GB submission coming up)
-* WIP (Ascent open issue(s))
-* WIP (~~VTK-m~~ Viskores open issue(s))
-* WIP (Catalyst open issue(s))
 
+There are active discussions with different dev teams (C. Harrison @LLNL, F. Mazen @Kitware), and some opened issues:
+
+* WIP (Ascent open issue(s))
+    * [support for actions_file(s)](https://github.com/Alpine-DAV/ascent/issues/1494)
+* WIP (~~VTK-m~~ Viskores open issue(s))
+    * [Problem with rendering strided arrays](https://github.com/Viskores/viskores/issues/115)
+* WIP (Catalyst open issue(s))
+    * [Strided access](https://gitlab.kitware.com/paraview/catalyst/-/issues/19>)
+    * [Catalyst-ParaView implementation crashes with external ptr to GPU memory](https://gitlab.kitware.com/paraview/paraview/-/issues/22242)
 ---
 
 # Future work

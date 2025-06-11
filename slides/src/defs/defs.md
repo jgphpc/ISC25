@@ -286,7 +286,7 @@ support transparent fine grained access to all main memory on the system.
 - Every Processing Unit (PU) has complete access to all main memory
 - Each GH200 is composed of two NUMA nodes
 - Memory allocated with malloc(), new() and mmap() <span v-mark.highlight.yellow>can be accessed by all CPUs and GPUs </span> in the compute node
-- Memory allocated with <span v-mark.highlight.yellow>cudaMalloc() cannot be accessed from the CPU and by other GPUs</span> on the compute node
+- Memory allocated with <span v-mark.highlight.yellow>cudaMalloc() cannot be accessed from the CPU or other GPUs</span> on the compute node
 - Placement of a memory page is <span v-mark.highlight.yellow>decided by the NUMA node of the thread that first writes
 to it</span>, not by the thread that allocates it.
 ---

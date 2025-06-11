@@ -43,21 +43,23 @@ WOIV\'25, 9th International Workshop on In Situ Visualization,
 13th June 2025
 
 ---
-layout: two-cols
-layoutClass: gap-16
-hideInToc: true
----
 
 # Outline
 
-
-::right::
-
-<br>
-<br>
-<Toc text-sm minDepth="1" maxDepth="1" column="2"/>
+* Smoothed Particle Hydrodynamics (SPH)
+* Testing multiple visualization algorithms in-situ
+* DummySPH: testing three visualization backends
+* Execution mode
+* Describing data (sharing memory pointers)
+* Device-resident data support (CUDA)
+   * The special case of NVIDIA Grace-Hopper
+* Special topic: Derived quantities
+* Production runs
+* Summary & Future work
+* Questions
 
 ---
+info: false
 src: ./src/defs/defs.md
 hide: false
 ---

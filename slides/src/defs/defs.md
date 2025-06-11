@@ -1,5 +1,6 @@
 ---
 layout: section
+
 ---
 
 # Smoothed Particle Hydrodynamics (SPH)
@@ -14,6 +15,8 @@ mechanics, multi-phase, fluid-structure interaction and astrophysics.
 
         - SPH-EXA: https://github.com/sphexa-org/sphexa
         - PKDGRAV3: https://bitbucket.org/dpotter/pkdgrav3
+
+Example: [The birth of Jupiter: a first visualization computed on ‘Alps’](https://www.cscs.ch/science/computer-science-hpc/2024/the-birth-of-jupiter-a-first-visualization-computed-on-alps)
 
 --- 
 
@@ -109,6 +112,33 @@ https://kitware.github.io/paraview-catalyst/
 ```bash
 https://vtk-m.readthedocs.io/en/stable/index.html
 ```
+<br>
+---
+
+# [DummySPH](https://github.com/jfavre/DummySPH): How to
+
+First release! v0.1
+
+To-Do (you, the user)
+* compile, install, validate your Ascent/VTK-m/Catalyst
+* compile DummySPH and choose one backend
+```
+set(INSITU None CACHE STRING "Enable in-situ support")
+set_property(CACHE INSITU PROPERTY STRINGS None Catalyst Ascent VTK-m)
+```
+Examples:
+```
+drwxrwxr-x  7 jfavre jfavre    4096 May 26 13:50 buildAscent/
+drwxrwxr-x  5 jfavre jfavre    4096 May 26 13:58 buildAscentCuda/
+drwxrwxr-x  6 jfavre jfavre    4096 Jun  4 14:45 buildAscentStrided/
+drwxrwxr-x  5 jfavre jfavre    4096 Apr 30 13:12 buildAscentStrided-Cuda/
+drwxrwxr-x  5 jfavre jfavre    4096 Jun 11 08:57 buildCatalyst2/
+drwxrwxr-x  5 jfavre jfavre    4096 Apr 17 11:00 buildCatalyst2Strided/
+drwxrwxr-x  4 jfavre jfavre    4096 Jun  4 08:46 buildVTKm/
+drwxrwxr-x  4 jfavre jfavre    4096 May 23 13:59 buildVTKmCuda/
+drwxrwxr-x  4 jfavre jfavre    4096 Jun  4 11:44 buildVTKmStrided/
+drwxrwxr-x  4 jfavre jfavre    4096 Jun  4 12:04 buildVTKmStridedCuda/
+```
 ---
 
 # Execution mode
@@ -130,7 +160,7 @@ The International Journal of High Performance Computing Applications, 34(6),
 
 # Describing data (sharing memory pointers)
 
-- Conduit: A light-weight (mostly zero-copy pointers) description of the in-memory data, that serves as a Common Denominator to both the Ascent & ParaView Catalyst backends
+- [Conduit](https://llnl-conduit.readthedocs.io/en/latest/blueprint.html): A light-weight (mostly zero-copy pointers) description of the in-memory data, that serves as a Common Denominator to both the Ascent & ParaView Catalyst backends
 
 ```cpp
 #if defined(USE_CATALYST) || defined(USE_ASCENT)
@@ -169,7 +199,7 @@ table {
 | -------- | :-------: | :--------: | :-------: |
 | in-situ rendering | ✅ yes, but parallel image compositing missing | ✅ yes, with parallel image compositing | idem |
 | Geometric clipping | ✅ yes | ✅ yes | ✅ yes, but with a VTK to VTK-m dataset conversion |
-| composing vectors | ✅ yes | ✅ yes | doable but  "very expensive" |
+| composing vectors | ✅ yes | ✅ yes | ✅ yes, but  "vtkSOADataArrayTemplate: GetVoidPointer called. This is very expensive for non-array-of-structs subclasses" |
 | Data binning | ⛔️ n.a. | float64 ✅ OK <br> float32 ❌ not OK | ⛔️ n.a. |
 | Histogram sampling | ✅ yes | ✅ yes | ⛔️ n.a. |
 
@@ -195,7 +225,7 @@ table {
 
 # Device-resident data support (CUDA)
 
-- DummySPH does a cudaMalloc() and cudaMemcpy(..., cudaMemcpyHostToDevice) after reading its initialization data
+- DummySPH does a cudaMalloc() + cudaMemcpy(..., cudaMemcpyHostToDevice) after reading its initialization data
 
 <p class="text-sm ...">
 ```cpp
@@ -209,7 +239,6 @@ device_move(conduit::Node &data, int data_nbytes)
 }
 
 addField(mesh, "rho", sim->rho.data(), sim->n);
-
 device_move(mesh["fields/rho/values"], data_nbytes);
 ```
 </p>
@@ -225,15 +254,18 @@ device_move(mesh["fields/rho/values"], data_nbytes);
 
 - Ascent does slightly less 
 
-- Catalyst is at the proof-of-concept level, but there is one specific solution at CSCS...
+- Catalyst is at the [proof-of-concept level](https://www.kitware.com/catalyst2-gpu-resident-workflows/)
+
+    - A hardware-tuned solution at CSCS has been validated with the CUDA Summer School exercises
 
 ---
 layout: section
 ---
 
-## Going further beyond the topics presented in the paper
+# Going further: the special case of NVIDIA Grace-Hopper
+
 ---
----
+
 ### Device-resident support: the special case of NVIDIA Grace-Hopper
 
 <div class="flex justify-center">
@@ -282,7 +314,7 @@ to it</span>, not by the thread that allocates it.
 ### Application: source code changes to run with ParaView Catalyst
 <br>
 
-- We successfully transformed a CUDA-enabled mini-app to be able to use ParaView Catalyst
+- Successfully transformed a CUDA-enabled mini-app to use ParaView Catalyst
 ```cpp
 
 -    double *x_host = malloc_host<double>(buffer_size);
@@ -294,7 +326,7 @@ to it</span>, not by the thread that allocates it.
 ```
 ```cpp
 #ifdef USE_CATALYST
-     // must copy data to host since we are not using a CUDA-enabled Catalyst at this time
+     // must copy data to host since we cannot use a CUDA-enabled Catalyst at this time
 -    copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
 +    //copy_to_host<double>(x1, x_host, buffer_size); // use x1 with most recent result
      CatalystAdaptor::Execute(step, dt);
@@ -311,14 +343,21 @@ to it</span>, not by the thread that allocates it.
 
 ```
 ---
+layout: section
 ---
-## Derived quantities
-Example: Calculate a Probability Density Function, e.g. evaluate radius = sqrt(x^2 + y^2 + z^2)
+
+# Special topic: Derived quantities
+
+---
+
+## Example
+
+Calculate a Probability Density Function, e.g. evaluate radius = sqrt(x^2 + y^2 + z^2)
 
 - Ascent uses OCCA
 - ParaView uses numpy
 <div class="flex justify-center">
-<img src="/src/images/pdf.png" style="width: 25vw; min-width: 300px;">
+<img src="/src/images/pdf.png" style="width: 23vw; min-width: 250px;">
 <br>
 </div>
 
@@ -388,10 +427,8 @@ extern "C" __global__ void _occa_map_0(double * output,
   }
 }
 
-
-
-...
 ```
+
 </Transform>
 </div>
 </div>
@@ -442,7 +479,7 @@ pythonCalculator1.Set(
 
 ---
 
-## Production runs with SPH-EXA
+# Production runs with SPH-EXA
 <br>
 
 <div class="flex justify-left">
@@ -575,8 +612,25 @@ infile8 = 'n265+ascent/3.csv' "20 million particles (max=%.2g bytes)" , STATS_ma
 <br>
 ---
 
-## Summary
+# Summary
+
+* SPH-EXA runs in production mode with CUDA-enabled ascent (GB submission coming up)
+* WIP (Ascent open issue(s))
+* WIP (~~VTK-m~~ Viskores open issue(s))
+* WIP (Catalyst open issue(s))
 
 ---
 
-## Questions?
+# Future work
+
+* Viskores has replaced VTK-m
+* Instrumenting another SPH code: DualPhysics
+* Take advantage of Grace (CPU) and Hopper (GPU) close proximity for concurrent processing
+* Test ROCm
+
+---
+
+# Questions?
+
+* Can I try DummySPH?
+* others?

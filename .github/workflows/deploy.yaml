@@ -1,4 +1,4 @@
-name: Deploy pages
+name: Deploy Slidev to GitHub Pages
 
 on:
   workflow_dispatch:
@@ -13,6 +13,10 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: ./slides/
 
 jobs:
   build:
@@ -31,23 +35,23 @@ jobs:
       - name: Install dependencies
         run: nci
 
-      - name: Build
+      - name: Build slidev
         run: nr build --base /${{github.event.repository.name}}/
 
-      - name: Setup Pages
+      - name: Setup Github Pages
         uses: actions/configure-pages@v4
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    name: Deploy
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

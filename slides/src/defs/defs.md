@@ -519,7 +519,7 @@ the cloud.
 </div>
 
 <div class="flex justify-center">
-  <img src="/src/images/sphexa_cuda_memcpy_ascent.png" class="h-65" border="1px">
+  <img src="/src/images/sphexa_cuda_memcpy_ascent.png" class="h-60" border="1px">
 </div>
 
 <!--

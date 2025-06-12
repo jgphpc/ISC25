@@ -46,7 +46,7 @@ jobs:
         run: rm -rf ../dist && mkdir -p ../dist
   
       - name: Build slidev      
-        run: nr build --base /${{github.event.repository.name}}/slides/ --out ../dist --verbose
+        run: nr build --base /${{github.event.repository.name}}/slides/ --out ../dist
   
       - name: Setup Github Pages
         uses: actions/configure-pages@v4

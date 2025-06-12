@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 defaults:
   run:
@@ -29,14 +29,24 @@ jobs:
         with:
           node-version: 'lts/*'
 
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+      
       - name: Setup @antfu/ni
         run: npm i -g @antfu/ni
 
       - name: Install dependencies
         run: nci
-
-      - name: Build slidev
-        run: nr build --base /${{github.event.repository.name}}/slides/ --out ../../dist
+        
+      - name: Clear dist directory
+        run: rm -rf ../dist && mkdir -p ../dist
+  
+      - name: Build slidev      
+        run: nr build --base /${{github.event.repository.name}}/slides/ --out ../dist --verbose
   
       - name: Setup Github Pages
         uses: actions/configure-pages@v4

@@ -286,7 +286,7 @@ support transparent fine grained access to all main memory on the system.
 - Every Processing Unit (PU) has complete access to all main memory
 - Each GH200 is composed of two NUMA nodes
 - Memory allocated with malloc(), new() and mmap() <span v-mark.highlight.yellow>can be accessed by all CPUs and GPUs </span> in the compute node
-- Memory allocated with <span v-mark.highlight.yellow>cudaMalloc() cannot be accessed from the CPU and by other GPUs</span> on the compute node
+- Memory allocated with <span v-mark.highlight.yellow>cudaMalloc() cannot be accessed from the CPU or other GPUs</span> on the compute node
 - Placement of a memory page is <span v-mark.highlight.yellow>decided by the NUMA node of the thread that first writes
 to it</span>, not by the thread that allocates it.
 ---
@@ -519,7 +519,7 @@ the cloud.
 </div>
 
 <div class="flex justify-center">
-  <img src="/src/images/sphexa_cuda_memcpy_ascent.png" class="h-65" border="1px">
+  <img src="/src/images/sphexa_cuda_memcpy_ascent.png" class="h-60" border="1px">
 </div>
 
 <!--
@@ -615,10 +615,16 @@ infile8 = 'n265+ascent/3.csv' "20 million particles (max=%.2g bytes)" , STATS_ma
 # Summary
 
 * SPH-EXA runs in production mode with CUDA-enabled ascent (GB submission coming up)
-* WIP (Ascent open issue(s))
-* WIP (~~VTK-m~~ Viskores open issue(s))
-* WIP (Catalyst open issue(s))
 
+There are active discussions with different dev teams (C. Harrison @LLNL, F. Mazen @Kitware), and some opened issues:
+
+* WIP (Ascent open issue(s))
+    * [support for actions_file(s)](https://github.com/Alpine-DAV/ascent/issues/1494)
+* WIP (~~VTK-m~~ Viskores open issue(s))
+    * [Problem with rendering strided arrays](https://github.com/Viskores/viskores/issues/115)
+* WIP (Catalyst open issue(s))
+    * [Strided access](https://gitlab.kitware.com/paraview/catalyst/-/issues/19>)
+    * [Catalyst-ParaView implementation crashes with external ptr to GPU memory](https://gitlab.kitware.com/paraview/paraview/-/issues/22242)
 ---
 
 # Future work

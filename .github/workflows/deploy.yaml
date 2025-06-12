@@ -46,7 +46,7 @@ jobs:
         run: rm -rf ../dist && mkdir -p ../dist
   
       - name: Build slidev      
-        run: nr build --base /${{github.event.repository.name}}/slides/ --out ../dist
+        run: nr build --base /${{github.event.repository.name}} --out ../dist
   
       - name: Setup Github Pages
         uses: actions/configure-pages@v4
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}slides/
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

@@ -4,11 +4,11 @@
 theme: ./slidev-theme-cscs
 # theme: seriph
 # background: images/title-bg3.png
-title: 'ISC 2025 in-situ visualization workshop'
+title: '19th SPHERIC World Conference'
 info: |
-  https://woiv.gitlab.io/woiv25/#program
+  https://spheric2025.upc.edu
 
-  Sources available at https://github.com/jfavre/
+  Sources available at https://github.com/jgphpc/
 favicon: /images/cscs.ico
 # apply unocss classes to the current slide
 # class: text-center
@@ -33,14 +33,13 @@ hideInToc: true
 # background: /scorep/logo.png
 ---
 
-### Issues and challenges of deploying in-situ visualization for SPH codes
+## In-situ Visualization for SPH Simulations
 
-Jean M. Favre and Jean-Guillaume Piccinali<br>
-Swiss National Supercomputing Centre (CSCS)<br>
+Jean-Guillaume Piccinali$^{\propto}$, Jean M. Favre$^{\propto}$, Rubén Cabezón$^\rho$<br>
+<small>Swiss National Supercomputing Centre$^{\propto}$, University of Basel$^\rho$</small><br>
 
-WOIV\'25, 9th International Workshop on In Situ Visualization,
- https://woiv.gitlab.io/woiv25<br>
-13th June 2025
+19th SPHERIC World Conference, https://spheric2025.upc.edu<br>
+<small>18th June 2025</small>
 
 ---
 
@@ -59,8 +58,11 @@ WOIV\'25, 9th International Workshop on In Situ Visualization,
 * Questions
 
 ---
+src: ./src/spheric25.md
+---
+
+<!-- 
 info: false
 src: ./src/defs/defs.md
 hide: false
----
-
+-->

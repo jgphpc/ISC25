@@ -45,17 +45,12 @@ Jean-Guillaume Piccinali$^{\propto}$, Jean M. Favre$^{\propto}$, Rubén Cabezón
 
 # Outline
 
-* Smoothed Particle Hydrodynamics (SPH)
-* Testing multiple visualization algorithms in-situ
-* DummySPH: testing three visualization backends
-* Execution mode
-* Describing data (sharing memory pointers)
-* Device-resident data support (CUDA)
-   * The special case of NVIDIA Grace-Hopper
-* Special topic: Derived quantities
-* Production runs
+<br>
+
+* Motivation
+* In Situ Visualization
+* Use cases
 * Summary & Future work
-* Questions
 
 ---
 src: ./src/spheric25.md

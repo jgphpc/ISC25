@@ -1,21 +1,22 @@
 <!-- {{{ Why ? -->
 # Back-of-the-envelope SPH
 
-<br>
+<Transform :scale="1.2">
 
-<Transform :scale="1.3">
-1 checkpoint file: 1'000'000'000'000 particles (2000 GPUs, half billion particles per GPU)<br><br>
+$10000^3$ particles simulation is within reach<br>(SPH-EXA, 2 000 GPUs, 1/2 billion particles per GPU)<br>
+Saving 50 checkpoint files per simulation:
+
 </Transform>
 
 <div class="flex justify-center">
 <Transform :scale="1.3">
 
-$\times$ 76 bytes per particle<br>
-~ 76 Petabytes 💾 (85% of CSCS filesystem)<br><br>
+$10^{12}$ particles $\times$ 50 $\times$ 76 bytes per particle<br>
+~ 3.5 Petabytes 💾 (<5% of CSCS 91 PB scratch filesystem)<br><br>
 $\times$ Average write speed at 200 GB/s<br>
-~ 4.5 days per checkpoint file ⏳️<br><br>
+~ almost 5 hours writing 50 output files ⏳️ ("wasting" 10 000 GPU hours)<br><br>
 $\times$ Long term storage at 60 EUR / TB / year<br>
-~ 4.5 million 💶 (per year)<br><br>
+~ 210 000 💶 (per year)<br><br>
 In-situ Visualization to the rescue 🛟<br>
 
 </Transform>
@@ -103,9 +104,47 @@ close. These calls
 <!-- }}} -->
 
 <!-- {{{ SPH-EXA test -->
+
+density301.mp4
 ---
 
 # Wind-Cloud collision test
+
+This test$^{[1]}$ simulates a spherical cloud of cold gas,
+initially at rest, swept by a low-density stream of gas (wind) moving supersonically.
+
+<div class="flex justify-center">
+<video width="384" height="216" controls>
+  <source src="/src/videos/sphexa-density.mp4" type="video/mp4">
+</video>
+</div>
+
+<!--
+320 x 240
+384 x 216
+480 x 270
+:Width  : 1 920 pixels
+:Height : 1 080 pixels
+-->
+
+<small>
+```
+             Time evolution of density in a thin slice of the domain,
+             Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud.
+             This simulation was run with the SPH-EXA code on CSCS Alps system.
+```
+</small>
+
+<div class="absolute bottom-0 left-0 p-12 w-full text-sm text-gray-500">
+  <small>[1] García-Senz D., Cabezón R. and Jose A. Escartín J. A.,
+  Conservative, density-based smoothed particle hydrodynamics with improved
+  partition of the unity and better estimation of gradients, in Astronomy &
+  Astrophysics, 10.1051/0004-6361/202141877</small>
+</div>
+
+---
+
+# Wind-Cloud collision test (failover)
 
 This test$^{[1]}$ simulates a spherical cloud of cold gas,
 initially at rest, swept by a low-density stream of gas (wind) moving supersonically.
@@ -319,7 +358,7 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 ## Next steps
 
 * Viskores instead of VTK-m
-* Contine tests with DualPhysics
+* Continue tests with DualPhysics (1 out of 150 examples tested)
 * ROCm support
 
 <!-- }}} -->

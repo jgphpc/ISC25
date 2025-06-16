@@ -103,6 +103,133 @@ close. These calls
 
 <!-- }}} -->
 
+<!-- {{{ DUALSPH test -->
+
+---
+
+# 3-D dam break test
+
+This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
+
+<!-- 
+YES! ffmpeg -pattern_type glob -i '*.png' -vcodec libx264 -s 640x360 -pix_fmt yuv420p -y eff.mp4
+NO! ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg
+-->
+
+<div class="flex justify-center">
+  <img src="/src/images/dualsph-logo.png" class="h-20 ml-5 mr-1">
+<video controls>
+  <source src="/src/videos/dualsph-density.mp4" type="video/mp4">
+</video>
+</div>
+
+---
+
+# 3-D dam break test (failover)
+
+This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
+
+<div class="flex justify-center">
+  <img src="/src/images/dualsph-logo.png" class="h-20 ml-5 mr-1">
+  <img src="/src/images/dualsphysics_dambreak.png" class="h-90 ml-1">
+</div>
+
+
+<!-- }}} -->
+<!-- {{{ MESH -->
+
+---
+
+## DualSPHysics: How to pass simulation mesh data to Ascent ?
+
+<div class="flex justify-right">
+<Transform :scale=".9">
+```cpp
+        ascent::Ascent myascent;
+
+        mymesh["coordsets/coords/type"] = "explicit";
+        mymesh["topologies/mesh/coordset"] = "coords";
+        // CONNECTIVITY_LIST
+        mymesh["topologies/mesh/type"] = "unstructured";
+        std::vector<conduit_int32> conn(array2_count);
+        std::iota(conn.begin(), conn.end(), 0);
+        mymesh["topologies/mesh/elements/connectivity"].set(conn);
+        mymesh["topologies/mesh/elements/shape"] = "point";
+        // coordinates
+        mymesh["coordsets/coords/values/x"].set(pos3_vec_x);
+        mymesh["coordsets/coords/values/y"].set(pos3_vec_y);
+        mymesh["coordsets/coords/values/z"].set(pos3_vec_z);
+        // x                                                // y
+        mymesh["fields/x/association"] = "vertex";          mymesh["fields/y/association"] = "vertex";
+        mymesh["fields/x/topology"] = "mesh";               mymesh["fields/y/topology"] = "mesh";
+        mymesh["fields/x/values"].set(pos3_vec_x);          mymesh["fields/y/values"].set(pos3_vec_y);
+        mymesh["fields/x/volume_dependent"].set("false");   mymesh["fields/y/volume_dependent"].set("false");
+        // z                                                // rho
+        mymesh["fields/z/association"] = "vertex";          mymesh["fields/rhop/association"] = "vertex";
+        mymesh["fields/z/topology"] = "mesh";               mymesh["fields/rhop/topology"] = "mesh";
+        mymesh["fields/z/values"].set(pos3_vec_z);          mymesh["fields/rhop/values"].set(rhop_vec);
+        mymesh["fields/z/volume_dependent"].set("false");   mymesh["fields/rhop/volume_dependent"].set("false");
+        //
+        myascent.publish(mymesh);
+
+```
+</Transform>
+</div>
+
+<!--
+Conduit Mesh Blueprint provides a strategy to describe and adapt mesh data between a wide range of APIs
+Ascent uses Conduit as a shared interface to describe and accept simulation mesh data
+Ascent accepts Conduit Mesh Blueprint data
+-->
+
+<!-- }}} -->
+<!-- {{{ ACTIONS -->
+
+---
+
+## DualSPHysics: How to pass Actions to Ascent ?
+
+<div class="flex justify-right">
+<Transform :scale=".8">
+```yaml
+-                              - 
+  action: "add_pipelines"        action: "add_scenes"
+  pipelines:                     scenes: 
+    pl_threshold_thin_clip_y:      s1: 
+      f1:                            plots: 
+        type: "threshold"              p2: 
+        params:                          type: "pseudocolor"
+          field: "y"                     field: "rhop"
+          min_value: 0.01                pipeline: "pl_threshold_thin_clip_y"
+          max_value: 1000                min_value: 0
+                                         max_value: 2
+                                         color_table: 
+                                           name: "Yellow - Gray - Blue"
+                                           annotation: "true"
+                                         points: 
+                                           radius: 0.002
+                                     renders: 
+                                       r1: 
+                                         image_prefix: "ascent_out/density."
+                                         image_width: 1920
+                                         image_height: 1080
+                                         camera: 
+                                           look_at: [1.35661780169381, 1.38117219796328, -0.24396172179603]
+                                           position: [-0.287688321338078, -1.45228141028134, 0.88710322932479]
+                                           up: [0.20434332985957, 0.258323616399011, 0.944199508977017]
+                                           zoom: 2.25
+                                         bg_color: [1.0, 1.0, 1.0]
+                                         fg_color: [0.0, 0.0, 0.0]
+                                         dataset_bounds: [0.0, 1.0, 0.0, 0.25, 0.0, 0.25]
+                                         color_bar_position: [0.2, 0.9, -0.9, -0.75]
+```
+</Transform>
+</div>
+
+<!-- /Users/piccinal/CSCS/OO/dualsph/density/CaseDambreak_4.0_0.0045+ascent/simple_trigger_actions.yaml -->
+
+<!-- }}} -->
+
 <!-- {{{ SPH-EXA test -->
 
 ---
@@ -113,7 +240,8 @@ This test$^{[1]}$ simulates a spherical cloud of cold gas,
 initially at rest, swept by a low-density stream of gas (wind) moving supersonically.
 
 <div class="flex justify-center">
-<video width="384" height="216" controls>
+  <img src="/src/images/SPH-EXA_logo.png" class="h-6 ml-5 mr-1">
+ <video width="384" height="216" controls>
   <source src="/src/videos/sphexa-density.mp4" type="video/mp4">
 </video>
 </div>
@@ -157,7 +285,7 @@ initially at rest, swept by a low-density stream of gas (wind) moving supersonic
 
 <small>
 ```
-             The figures show the time evolution of density in a thin slice of the domain,
+             Time evolution of density in a thin slice of the domain,
              Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud.
              This simulation was run with the SPH-EXA code on CSCS Alps system.
 ```
@@ -178,7 +306,7 @@ extensively studied in recent years -->
 
 ---
 
-## How to pass SPH simulation mesh data to Ascent ?
+## SPH-EXA: How to pass simulation mesh data to Ascent ?
 
 <div class="flex justify-right">
 <Transform :scale=".8">
@@ -228,88 +356,50 @@ Ascent accepts Conduit Mesh Blueprint data
 
 ---
 
-## How to pass SPH Actions to Ascent ?
+## SPH-EXA: How to pass Actions to Ascent ?
 
 <div class="flex justify-left">
 <Transform :scale=".75">
 ```yaml
--
-  action: "add_triggers"
+- action: "add_triggers"
   triggers:
     t1:
       params:
         condition: "cycle() % 5 == 0"
         actions:
-          -
-            action: "add_pipelines"
+          - action: "add_pipelines"
             pipelines:
-              pl_threshold_thin_clip_z:     pl_threshold_thin_clip_y:   renders:
-                f1:                           f1:                         r1:
-                  type: "threshold"             type: "threshold"           image_prefix: "datasets/Temperature.%05d"
-                  params:                       params:                     image_width: 1920
-                    field: "z"                    field: "y"                image_height: 1080
-                    min_value: 0.12425            min_value: 0.12425        camera:
-                    max_value: 0.12575            max_value: 0.12575          look_at: [0.5, 0.125, 0.125]
-                                                                              position: [0.5, 0.125, 3.0]
-          -                                                                   up: [0.0, 1.0, 0.0]
-            action: "add_scenes"                                              azimuth: -35.0
-            scenes:                                                           elevation: 25.0
-              s1:                                                             zoom: 5.25
+              pl_threshold_thin_clip_z:     pl_threshold_thin_clip_y:   
+                f1:                           f1:                       
+                  type: "threshold"             type: "threshold"       
+                  params:                       params:                 
+                    field: "z"                    field: "y"            
+                    min_value: 0.12425            min_value: 0.12425    
+                    max_value: 0.12575            max_value: 0.12575    
+                                                                        
+          - action: "add_scenes"                                        
+            scenes:                                                     
+              s1:                                                       
                 plots:                                                                      
-                  p1:                                       p2:                             
-                    type: "pseudocolor"                       type: "pseudocolor"           
-                    field: "Temperature"                      field: "Temperature"          
-                    pipeline: "pl_threshold_thin_clip_z"      pipeline: "pl_threshold_thin_clip_y"
-                    min_value: 1                              min_value: 1
-                    max_value: 10                             max_value: 10
-                    color_table:                              color_table:
-                      name: "Yellow - Gray - Blue"              name: "Yellow - Gray - Blue"
-                      annotation: "false"                       annotation: "true"
-                    points:                                   points:
-                      radius: 0.002                             radius: 0.002                         
+                  p1:                                       p2:                                   renders:
+                    type: "pseudocolor"                       type: "pseudocolor"                   r1:
+                    field: "Temperature"                      field: "Temperature"                    image_prefix: "datasets/Temperature.%05d"
+                    pipeline: "pl_threshold_thin_clip_z"      pipeline: "pl_threshold_thin_clip_y"    image_width: 1920
+                    min_value: 1                              min_value: 1                            image_height: 1080
+                    max_value: 10                             max_value: 10                           camera:
+                    color_table:                              color_table:                              look_at: [0.5, 0.125, 0.125]
+                      name: "Yellow - Gray - Blue"              name: "Yellow - Gray - Blue"            position: [0.5, 0.125, 3.0]
+                      annotation: "false"                       annotation: "true"                      up: [0.0, 1.0, 0.0]
+                    points:                                   points:                                   azimuth: -35.0
+                      radius: 0.002                             radius: 0.002                           elevation: 25.0
+                                                                                                        zoom: 5.25
 ```
 </Transform>
 </div>
 
 <!--
- 
+/Users/piccinal/git/CSCS/KEEP_TODO/SPHERIC25/DummySPH.git/Ascent_yaml/sphexa.yaml 
 -->
-
-<!-- }}} -->
-
-<!-- {{{ DUALSPH test -->
-
----
-
-# 3-D dam break test
-
-This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
-
-<!-- 
-YES! ffmpeg -pattern_type glob -i '*.png' -vcodec libx264 -s 640x360 -pix_fmt yuv420p -y eff.mp4
-NO! ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg
--->
-
-<div class="flex justify-center">
-  <img src="/src/images/dualsph-logo.png" class="h-20 ml-5 mr-1">
-<video controls>
-  <source src="/src/videos/dualsph-density.mp4" type="video/mp4">
-</video>
-</div>
-
----
-
-# 3-D dam break test (failover)
-
-This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
-
-<!-- ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg -->
-
-<div class="flex justify-center">
-  <img src="/src/images/dualsph-logo.png" class="h-20 ml-5 mr-1">
-  <img src="/src/images/dualsphysics_dambreak.png" class="h-90 ml-1">
-</div>
-
 
 <!-- }}} -->
 
@@ -323,28 +413,67 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
   <img src="/src/images/sphexa_baseline_hdf5_ascent.png" class="h-50" border="1px">
 </div>
 
-```
-    thresholding: 192 H100 GPUs, $55.10^9$ particles, insitu every iteration, 87% of GPU peak memory (95GB)
-```
-
 <!--
 We simulated this test with a total number of 55 billion global particles,
 arranged in four blocks of 2400^3 particles each, with one block containing a
 cavity for the high-density cloud.
 - https://www.aanda.org/articles/aa/full_html/2022/03/aa41877-21/aa41877-21.html
+ 83 GB / 95 GB = 87%
 -->
 
-- Ascent GPU memory usage
+#### Ascent GPU memory usage (thresholding, 87% of GPU peak memory (95GB))
 
-<!-- 83 GB / 95 GB = 87% -->
+<!-- <small>192 H100 GPUs, 55 billion particles, insitu every 5 iteration, 87% of GPU peak memory (95GB)</small> -->
 
 <div class="flex justify-center">
-  <img src="/src/images/sphexa_nsys_gpu_memory-ascent.png" class="h-50 ml-1" border="1px">
+  <img src="/src/images/sphexa_nsys_gpu_memory-ascent.png" class="h-60 ml-1" border="1px">
 </div>
 
 <!-- }}} -->
+<!-- {{{ SOA/AOS -->
 
-<!-- {{{ Summary of tests -->
+---
+
+## AOS vs SOA
+
+<br>
+<div class="grid grid-cols-[50%_50%] gap-2">
+<div> <!-- #left -->
+
+```cpp
+Array-of-Structures (AOS)
+
+struct tipsySph {
+    float mass;
+    float positions[3];
+    float velocities[3];
+    float density;
+    float temperature;
+    float phi;
+}
+std::vector<tipsySph> scalarsAOS;
+int NbofScalarfields = sizeof(tipsySph)/sizeof(float);
+```
+</div>
+
+<div> <!-- #right -->
+```cpp
+Structure-of-Arrays (SOA)
+
+{
+    std::vector<float> mass;
+    std::vector<float> posx, posy, posz;
+    std::vector<float> velx, vely, velz;
+    std::vector<float> density;
+    std::vector<float> temperature;
+    std::vector<float> phi;
+}
+```
+</div>
+</div>
+
+<!-- }}} -->
+<!-- {{{ DummySPH -->
 ---
 
 ### `DummySPH`: a mini-app to test In Situ Visualization libraries for SPH
@@ -375,6 +504,7 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 
 - Open issues remain to be fixed but production runs are possible
 
+<br>
 <br>
 
 ## Next steps

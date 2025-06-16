@@ -1,15 +1,17 @@
-- https://www.kitware.eu
-    - https://vtk.org
-        - https://vtk-m.readthedocs.io
-        - https://viskores.readthedocs.io
+## References
 
+<br>
+
+- https://vtk.org, https://vtk-m.readthedocs.io, https://viskores.readthedocs.io
 - https://ascent.readthedocs.io
-       
 - https://kitware.github.io/paraview-catalyst/ 
-- https://gitlab.kitware.com/paraview/catalyst.git
 - https://github.com/llnl/conduit.git
 
-        
+- https://github.com/sphexa-org/sphexa.git
+- https://github.com/DualSPHysics/DualSPHysics.git
+- https://github.com/jfavre/DummySPH.git 
+
+
 <!-- 
 https://github.com/Kitware/VTK 
 https://github.com/Viskores/viskores
@@ -42,5 +44,3 @@ architectures.
 - Viskores: the visualization toolkit for multi/many-core architectures (ORNL, LANL, Sandia)
 
 -->
-
-

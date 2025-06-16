@@ -51,10 +51,15 @@ https://tinyurl.com/SPHERIC25<br>
 * Motivation
 * In Situ Visualization
 * Use cases
+* Large Scale In Situ Visualization
 * Summary & Future work
 
 ---
 src: ./src/spheric25.md
+---
+
+---
+src: ./src/refs.md
 ---
 
 <!-- 

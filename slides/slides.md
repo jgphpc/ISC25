@@ -39,7 +39,7 @@ Jean-Guillaume Piccinali$^{\propto}$, Jean M. Favre$^{\propto}$, Rubén Cabezón
 <small>Swiss National Supercomputing Centre$^{\propto}$, University of Basel$^\rho$</small><br>
 
 19th SPHERIC World Conference<br>
-https://jgphpc.github.io/ISC25/SPHERIC25/1
+https://tinyurl.com/SPHERIC25<br>
 <small>18th June 2025</small>
 
 ---

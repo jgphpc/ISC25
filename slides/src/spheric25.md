@@ -105,7 +105,6 @@ close. These calls
 
 <!-- {{{ SPH-EXA test -->
 
-density301.mp4
 ---
 
 # Wind-Cloud collision test
@@ -123,6 +122,7 @@ initially at rest, swept by a low-density stream of gas (wind) moving supersonic
 320 x 240
 384 x 216
 480 x 270
+1920x1080
 :Width  : 1 920 pixels
 :Height : 1 080 pixels
 -->
@@ -278,16 +278,38 @@ Ascent accepts Conduit Mesh Blueprint data
 <!-- }}} -->
 
 <!-- {{{ DUALSPH test -->
+
 ---
 
 # 3-D dam break test
 
-This test simulates a 3-D dam break flow impacting on a structure
+This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
+
+<!-- 
+YES! ffmpeg -pattern_type glob -i '*.png' -vcodec libx264 -s 640x360 -pix_fmt yuv420p -y eff.mp4
+NO! ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg
+-->
 
 <div class="flex justify-center">
-  <img src="/src/images/dualsph-logo.png" class="h-10 ml-5 mr-1">
+  <img src="/src/images/dualsph-logo.png" class="h-20 ml-5 mr-1">
+<video controls>
+  <source src="/src/videos/dualsph-density.mp4" type="video/mp4">
+</video>
+</div>
+
+---
+
+# 3-D dam break test (failover)
+
+This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
+
+<!-- ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg -->
+
+<div class="flex justify-center">
+  <img src="/src/images/dualsph-logo.png" class="h-20 ml-5 mr-1">
   <img src="/src/images/dualsphysics_dambreak.png" class="h-90 ml-1">
 </div>
+
 
 <!-- }}} -->
 

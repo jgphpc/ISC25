@@ -46,8 +46,8 @@ jobs:
         run: rm -rf ../dist && mkdir -p ../dist
   
       - name: Build slidev      
-        run: nr build --base /SPHERIC25 --out ../dist
-        # run: nr build --base /${{github.event.repository.name}} --out ../dist
+        # run: nr build --base /SPHERIC25 --out ../dist
+        run: nr build --base /${{github.event.repository.name}} --out ../dist
   
       - name: Setup Github Pages
         uses: actions/configure-pages@v4
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}/SPHERIC25
+      url: ${{ steps.deployment.outputs.page_url }}SPHERIC25
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

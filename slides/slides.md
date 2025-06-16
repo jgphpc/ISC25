@@ -8,7 +8,7 @@ title: '19th SPHERIC World Conference'
 info: |
   https://spheric2025.upc.edu
 
-  Sources available at https://github.com/jgphpc/
+  https://jgphpc.github.io/ISC25/SPHERIC25/1
 favicon: /images/cscs.ico
 # apply unocss classes to the current slide
 # class: text-center
@@ -38,7 +38,8 @@ hideInToc: true
 Jean-Guillaume Piccinali$^{\propto}$, Jean M. Favre$^{\propto}$, Rubén Cabezón$^\rho$<br>
 <small>Swiss National Supercomputing Centre$^{\propto}$, University of Basel$^\rho$</small><br>
 
-19th SPHERIC World Conference, https://spheric2025.upc.edu<br>
+19th SPHERIC World Conference<br>
+https://jgphpc.github.io/ISC25/SPHERIC25/1
 <small>18th June 2025</small>
 
 ---

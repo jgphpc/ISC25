@@ -528,20 +528,26 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 
 ---
 
-<br> <br> <br>
-
 ## Conclusion
 
 - Open issues remain to be fixed but production runs are possible
-
-<br>
-<br>
 
 ## Next steps
 
 * Viskores instead of VTK-m
 * Continue tests with DualPhysics (1 out of 150 examples tested)
-* ROCm support
+* ROCm AMD GPUs support
+
+<div class="flex justify-center">
+<small>https://www.cscs.ch/science/computer-science-hpc/</small>
+</div>
+<div class="flex justify-center">
+<video width="480" height="260" controls>
+  <source src="/src/videos/jupiter.mp4" type="video/mp4">
+</video>
+</div>
+
+
 
 <!-- }}} -->
 <!-- {{{ References -->

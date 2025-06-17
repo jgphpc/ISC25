@@ -144,15 +144,18 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
 
 <div class="flex justify-right">
 <Transform :scale=".75">
-```cpp
-        ascent::Ascent myascent; conduit::Node mymesh;
-        // Pos3.x
+````md magic-move {lines: true}
+
+```cpp {1-8|9-21|22-31|*}
+        // Pos3_vec
         const tfloat3* pos3_ptr = reinterpret_cast<const tfloat3*>(arrays2.Arrays[0].ptr);
         std::vector<tfloat3> pos3_vec(pos3_ptr, pos3_ptr + array2_count);
+        // Pos3_vec.x
         std::vector<float> pos3_vec_x(pos3_vec.size());
         std::transform(pos3_vec.begin(), pos3_vec.end(), pos3_vec_x.begin(),
                        [](const tfloat3& pos) { return pos.x; });
-        // [...] replicate code for Pos3.y and Pos3.z...
+        // [...] replicate code for Pos3_vec.y and Pos3_vec.z...
+        ascent::Ascent myascent; conduit::Node mymesh;
         mymesh["coordsets/coords/type"] = "explicit";
         mymesh["topologies/mesh/coordset"] = "coords";
         // CONNECTIVITY_LIST
@@ -177,8 +180,10 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
         mymesh["fields/z/volume_dependent"].set("false");   mymesh["fields/rhop/volume_dependent"].set("false");
         //
         myascent.publish(mymesh);
-
 ```
+
+````
+
 </Transform>
 </div>
 
@@ -214,9 +219,22 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 
 <div class="flex justify-right">
 <Transform :scale=".8">
+````md magic-move {lines: true}
+
 ```yaml
--                              - 
-  action: "add_pipelines"        action: "add_scenes"
+- action: "add_pipelines"      
+  pipelines:                   
+    pl_threshold_thin_clip_y:  
+      f1:                      
+        type: "threshold"      
+        params:                
+          field: "y"           
+          min_value: 0.01      
+          max_value: 1000      
+```
+
+```yaml
+- action: "add_pipelines"      - action: "add_scenes"
   pipelines:                     scenes: 
     pl_threshold_thin_clip_y:      s1: 
       f1:                            plots: 
@@ -231,6 +249,25 @@ particles) to Ascent for visualization or data extraction at a given timestep.
                                            annotation: "true"
                                          points: 
                                            radius: 0.002
+```
+
+```yaml
+- action: "add_pipelines"      - action: "add_scenes"
+  pipelines:                     scenes: 
+    pl_threshold_thin_clip_y:      s1: 
+      f1:                            plots: 
+        type: "threshold"              p2: 
+        params:                          type: "pseudocolor"
+          field: "y"                     field: "rhop"
+          min_value: 0.01                pipeline: "pl_threshold_thin_clip_y"
+          max_value: 1000                min_value: 0
+                                         max_value: 2
+                                         color_table: 
+                                           name: "Yellow - Gray - Blue"
+                                           annotation: "true"
+                                         points: 
+                                           radius: 0.002
+
                                      renders: 
                                        r1: 
                                          image_prefix: "ascent_out/density."
@@ -246,6 +283,8 @@ particles) to Ascent for visualization or data extraction at a given timestep.
                                          dataset_bounds: [0.0, 1.0, 0.0, 0.25, 0.0, 0.25]
                                          color_bar_position: [0.2, 0.9, -0.9, -0.75]
 ```
+````
+
 </Transform>
 </div>
 
@@ -333,9 +372,9 @@ extensively studied in recent years -->
 
 <div class="flex justify-right">
 <Transform :scale=".8">
-```cpp
-ascent::Ascent a;
+````md magic-move {lines: true}
 
+```cpp {1-13|14-25|*}
 void Execute(DataType& d, long startIndex, long endIndex) {
   conduit::Node mesh;
   mesh["coordsets/coords/type"] = "explicit";
@@ -354,8 +393,6 @@ void Execute(DataType& d, long startIndex, long endIndex) {
   addField(mesh, "y", get<"y">(d).data(), startIndex, endIndex);
   addField(mesh, "z", get<"z">(d).data(), startIndex, endIndex);
   addField(mesh, "Density", get<"rho">(d).data(), startIndex, endIndex);
-
-  a.publish(mesh);
   
 void addField(conduit::Node& mesh, const std::string& name, FieldType* field, size_t start, size_t end)
 {
@@ -364,7 +401,12 @@ void addField(conduit::Node& mesh, const std::string& name, FieldType* field, si
     mesh["fields/" + name + "/values"].set_external(field + start, end - start);
     mesh["fields/" + name + "/volume_dependent"].set("false");
 }
+
+  ascent::Ascent myactions;
+  myactions.publish(mesh);
 ```
+````
+
 </Transform>
 </div>
 
@@ -383,7 +425,9 @@ Ascent accepts Conduit Mesh Blueprint data
 
 <div class="flex justify-left">
 <Transform :scale=".75">
-```yaml
+````md magic-move {lines: true}
+
+```yaml {1-16|*}
 - action: "add_triggers"
   triggers:
     t1:

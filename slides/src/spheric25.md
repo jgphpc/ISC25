@@ -12,7 +12,7 @@ Saving 50 checkpoint files per simulation:
 <Transform :scale="1.3">
 
 $10^{12}$ particles $\times$ 50 $\times$ 76 bytes per particle<br>
-~ 3.5 Petabytes 💾 (<5% of CSCS 91 PB scratch filesystem)<br><br>
+~ 3.5 PB 💾 (<5% of CSCS 91 PB scratch filesystem)<br><br>
 $\times$ Average write speed at 200 GB/s<br>
 ~ almost 5 hours writing 50 output files ⏳️ ("wasting" 10 000 GPU hours)<br><br>
 $\times$ Long term storage at 60 EUR / TB / year<br>
@@ -143,10 +143,16 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
 ## DualSPHysics: How to pass simulation mesh data to Ascent ?
 
 <div class="flex justify-right">
-<Transform :scale=".9">
+<Transform :scale=".75">
 ```cpp
-        ascent::Ascent myascent;
-
+        ascent::Ascent myascent; conduit::Node mymesh;
+        // Pos3.x
+        const tfloat3* pos3_ptr = reinterpret_cast<const tfloat3*>(arrays2.Arrays[0].ptr);
+        std::vector<tfloat3> pos3_vec(pos3_ptr, pos3_ptr + array2_count);
+        std::vector<float> pos3_vec_x(pos3_vec.size());
+        std::transform(pos3_vec.begin(), pos3_vec.end(), pos3_vec_x.begin(),
+                       [](const tfloat3& pos) { return pos.x; });
+        // [...] replicate code for Pos3.y and Pos3.z...
         mymesh["coordsets/coords/type"] = "explicit";
         mymesh["topologies/mesh/coordset"] = "coords";
         // CONNECTIVITY_LIST
@@ -179,7 +185,24 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
 <!--
 Conduit Mesh Blueprint provides a strategy to describe and adapt mesh data between a wide range of APIs
 Ascent uses Conduit as a shared interface to describe and accept simulation mesh data
-Ascent accepts Conduit Mesh Blueprint data
+Ascent accepts Conduit Mesh Blueprint data.
+
+The Execute function in src/source/ascent_adaptor.h is responsible for
+preparing and publishing particle simulation data to the Ascent in situ
+visualization library.
+
+- It takes particle data arrays (positions and densities) and a timestep.
+- It extracts and organizes the particle positions (x, y, z) and density (rhop) into vectors.
+- It builds a Conduit mesh node containing:
+    The current simulation state and time,
+    Coordinates for all particles,
+    Mesh topology as a set of points,
+    Field data for x, y, z, and rhop (density).
+- It verifies the mesh structure with Conduit’s mesh blueprint.
+- If the mesh is valid, it publishes the mesh to Ascent and executes any pre-staged visualization actions.
+In summary:
+Execute sends the current state of your simulation (positions and densities of
+particles) to Ascent for visualization or data extraction at a given timestep.
 -->
 
 <!-- }}} -->
@@ -383,7 +406,7 @@ Ascent accepts Conduit Mesh Blueprint data
                 plots:                                                                      
                   p1:                                       p2:                                   renders:
                     type: "pseudocolor"                       type: "pseudocolor"                   r1:
-                    field: "Temperature"                      field: "Temperature"                    image_prefix: "datasets/Temperature.%05d"
+                    field: "Density"                      field: "Density"                    image_prefix: "datasets/Density.%05d"
                     pipeline: "pl_threshold_thin_clip_z"      pipeline: "pl_threshold_thin_clip_y"    image_width: 1920
                     min_value: 1                              min_value: 1                            image_height: 1080
                     max_value: 10                             max_value: 10                           camera:
@@ -407,9 +430,10 @@ Ascent accepts Conduit Mesh Blueprint data
 
 ---
 
-## Large scale In Situ Visualisation (SPH-EXA)
+## Large scale In Situ Visualisation
 
 <div class="flex justify-left">
+  <img src="/src/images/SPH-EXA_logo.png" class="h-6 ml-5 mr-1">
   <img src="/src/images/sphexa_baseline_hdf5_ascent.png" class="h-50" border="1px">
 </div>
 
@@ -430,56 +454,18 @@ cavity for the high-density cloud.
 </div>
 
 <!-- }}} -->
-<!-- {{{ SOA/AOS -->
-
----
-
-## AOS vs SOA
-
-<br>
-<div class="grid grid-cols-[50%_50%] gap-2">
-<div> <!-- #left -->
-
-```cpp
-Array-of-Structures (AOS)
-
-struct tipsySph {
-    float mass;
-    float positions[3];
-    float velocities[3];
-    float density;
-    float temperature;
-    float phi;
-}
-std::vector<tipsySph> scalarsAOS;
-int NbofScalarfields = sizeof(tipsySph)/sizeof(float);
-```
-</div>
-
-<div> <!-- #right -->
-```cpp
-Structure-of-Arrays (SOA)
-
-{
-    std::vector<float> mass;
-    std::vector<float> posx, posy, posz;
-    std::vector<float> velx, vely, velz;
-    std::vector<float> density;
-    std::vector<float> temperature;
-    std::vector<float> phi;
-}
-```
-</div>
-</div>
-
-<!-- }}} -->
 <!-- {{{ DummySPH -->
 ---
 
 ### `DummySPH`: a mini-app to test In Situ Visualization libraries for SPH
 
 <div class="flex justify-center">
-<img src="/src/images/dummysph_summary.png" class="h-99 ml-1 mr-1">
+    <img src="/src/images/aos.png" class="h-55 ml-1 mr-1"><br>
+</div>
+
+<div class="flex justify-center">
+    <img src="/src/images/soa.png" class="h-45 ml-1 mr-1">
+    <!-- <img src="/src/images/dummysph_summary.png" class="h-99 ml-1 mr-1"> -->
 </div>
 
 <!--
@@ -512,5 +498,57 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 * Viskores instead of VTK-m
 * Continue tests with DualPhysics (1 out of 150 examples tested)
 * ROCm support
+
+<!-- }}} -->
+<!-- {{{ References -->
+
+---
+
+## References
+
+<br>
+
+- https://vtk.org, https://vtk-m.readthedocs.io, https://viskores.readthedocs.io
+- https://ascent.readthedocs.io
+- https://kitware.github.io/paraview-catalyst/ 
+- https://github.com/llnl/conduit.git
+
+- https://github.com/sphexa-org/sphexa.git
+- https://github.com/DualSPHysics/DualSPHysics.git
+- https://github.com/jfavre/DummySPH.git 
+
+
+<!-- 
+https://github.com/Kitware/VTK 
+https://github.com/Viskores/viskores
+
+https://github.com/Alpine-DAV/ascent/releases
+-->
+
+<!-- 
+ascent: a collaborative effort of the U.S. Department of Energy Office of
+Science and the National Nuclear Security Administration, Lawrence Livermore
+National
+Laboratory
+
+vtkm: Copyright Kitware Inc., National Technology & Engineering Solutions of
+Sandia LLC, UT-Battelle LLC, Los Alamos National Security LLC
+
+Viskores: This research was funded by the U.S. Department of Energy, including
+Oak Ridge, Los Alamos, and Sandia National Laboratories. It utilized resources
+from the Oak Ridge and Argonne Leadership Computing Facilities
+This research was funded by the U.S. Department of Energy, including Oak Ridge, Los Alamos, and Sandia National Laboratories. It utilized resources from the Oak Ridge and Argonne Leadership Computing Facilities.
+
+Accelerating the Visualization Toolkit for Massively Threaded Architectures
+is a toolkit of scientific visualization algorithms for emerging
+processor architectures. VTK-m supports the fine-grained concurrency for
+data analysis and visualization algorithms required to drive extreme scale
+computing by providing abstract models for data and execution that can be
+applied to a variety of algorithms across many different processor
+architectures.
+ VTK-m is being discontinued, Viskores is its successor.
+- Viskores: the visualization toolkit for multi/many-core architectures (ORNL, LANL, Sandia)
+
+-->
 
 <!-- }}} -->

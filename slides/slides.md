@@ -58,10 +58,6 @@ https://tinyurl.com/SPHERIC25<br>
 src: ./src/spheric25.md
 ---
 
----
-src: ./src/refs.md
----
-
 <!-- 
 info: false
 src: ./src/defs/defs.md

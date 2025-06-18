@@ -21,7 +21,6 @@ etc...
 🇺🇸LLNL+ORNL+ANL = 150 000 GPUs, 🇪🇺LUMI+JSC+CSCS = 50 000 GPUs<br>
 $10000^3$ particles simulation is within reach<br>
 (SPH-EXA, 2 000 GPUs, 1/2 billion particles per GPU)<br>
-LUMI-G has 
 Saving 50 checkpoint files per simulation:
 
 </Transform>
@@ -61,7 +60,6 @@ https://sli.dev/demo/starter/11
 -->
 
 <!-- }}} -->
-
 <!-- {{{ Backends -->
 ---
 
@@ -85,13 +83,13 @@ https://sli.dev/demo/starter/11
 <div class="flex items-center gap-0"><img src="/src/images/vtk-logo.png" class="h-10 ml-5 mr-1">: Kitware Visualization Toolkit and
 <img src="/src/images/vtkm-logo.svg" class="h-6 ml-1 mr-1">: VTK for Massively Threaded Architectures</div>
 
-<div class="flex items-center gap-0"><img src="/src/images/viskores-logo-white.png" class="h-6 ml-5 mr-1">Viskores: Successor to VTK-m being discontinued (Kitware, ORNL, LANL, Sandia, UT-Batelle)</div>
+<div class="flex items-center gap-0"><img src="/src/images/viskores-logo-white.png" class="h-6 ml-20 mr-1">Viskores: Successor to VTK-m being discontinued (Kitware, ORNL, LANL, Sandia, UT-Batelle)</div>
 
 <div class="flex items-center gap-0"><img src="/src/images/ascent-logo.png" class="h-10 ml-5 mr-1">: Easier-to-use Flyweight In-situ library for HPC simulations (NNSA/LLNL)</div>
 
-<div class="flex items-center gap-0"><img src="/src/images/conduit-logo.png" class="h-6 ml-5 mr-1">: Simplified Data Exchange library for HPC Simulations (LLNL)</div>
-
 <div class="flex items-center gap-0"><img src="/src/images/pvcatalyst-logo.png" class="h-6 ml-5 mr-1">: ParaView implementation of the Catalyst API (Kitware, Sandia, LANL)</div>
+
+<div class="flex items-center gap-0"><img src="/src/images/conduit-logo.png" class="h-6 ml-30 mr-1">: Simplified Data Exchange library for HPC Simulations (LLNL)</div>
 
 </Transform></div>
 
@@ -158,18 +156,11 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
 ## DualSPHysics: How to pass simulation mesh data to Ascent ?
 
 <div class="flex justify-right">
-<Transform :scale=".75">
+<!-- <Transform :scale=".75"> -->
+
 ````md magic-move {lines: true}
 
-```cpp {1-8|9-21|22-31|*}
-        // Pos3_vec
-        const tfloat3* pos3_ptr = reinterpret_cast<const tfloat3*>(arrays2.Arrays[0].ptr);
-        std::vector<tfloat3> pos3_vec(pos3_ptr, pos3_ptr + array2_count);
-        // Pos3_vec.x
-        std::vector<float> pos3_vec_x(pos3_vec.size());
-        std::transform(pos3_vec.begin(), pos3_vec.end(), pos3_vec_x.begin(),
-                       [](const tfloat3& pos) { return pos.x; });
-        // [...] replicate code for Pos3_vec.y and Pos3_vec.z...
+```cpp {1-9|10-17|18-21|*}
         ascent::Ascent myascent; conduit::Node mymesh;
         mymesh["coordsets/coords/type"] = "explicit";
         mymesh["topologies/mesh/coordset"] = "coords";
@@ -179,27 +170,25 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
         std::iota(conn.begin(), conn.end(), 0);
         mymesh["topologies/mesh/elements/connectivity"].set(conn);
         mymesh["topologies/mesh/elements/shape"] = "point";
-        // coordinates
-        mymesh["coordsets/coords/values/x"].set(pos3_vec_x);
-        mymesh["coordsets/coords/values/y"].set(pos3_vec_y);
-        mymesh["coordsets/coords/values/z"].set(pos3_vec_z);
-        // x                                                // y
-        mymesh["fields/x/association"] = "vertex";          mymesh["fields/y/association"] = "vertex";
-        mymesh["fields/x/topology"] = "mesh";               mymesh["fields/y/topology"] = "mesh";
-        mymesh["fields/x/values"].set(pos3_vec_x);          mymesh["fields/y/values"].set(pos3_vec_y);
-        mymesh["fields/x/volume_dependent"].set("false");   mymesh["fields/y/volume_dependent"].set("false");
-        // z                                                // rho
-        mymesh["fields/z/association"] = "vertex";          mymesh["fields/rhop/association"] = "vertex";
-        mymesh["fields/z/topology"] = "mesh";               mymesh["fields/rhop/topology"] = "mesh";
-        mymesh["fields/z/values"].set(pos3_vec_z);          mymesh["fields/rhop/values"].set(rhop_vec);
-        mymesh["fields/z/volume_dependent"].set("false");   mymesh["fields/rhop/volume_dependent"].set("false");
+        // Pos3_vec
+        const tfloat3* pos3_ptr = reinterpret_cast<const tfloat3*>(arrays2.Arrays[0].ptr);
+        std::vector<tfloat3> pos3_vec(pos3_ptr, pos3_ptr + array2_count);
+        // Pos3_vec.x
+        std::vector<float> pos3_vec_x(pos3_vec.size());
+        std::transform(pos3_vec.begin(), pos3_vec.end(), pos3_vec_x.begin(),
+                       [](const tfloat3& pos) { return pos.x; });
+        // [...] replicate code for Pos3_vec.y, Pos3_vec.z and rho (arrays2.Arrays[3].ptr)
+        // coordinates                                          // density (do the same for x,y,z )
+        mymesh["coordsets/coords/values/x"].set(pos3_vec_x);    mymesh["fields/rhop/association"] = "vertex";       
+        mymesh["coordsets/coords/values/y"].set(pos3_vec_y);    mymesh["fields/rhop/topology"] = "mesh";            
+        mymesh["coordsets/coords/values/z"].set(pos3_vec_z);    mymesh["fields/rhop/values"].set(rhop_vec);       
         //
         myascent.publish(mymesh);
 ```
 
 ````
 
-</Transform>
+<!-- </Transform> -->
 </div>
 
 <!--
@@ -233,7 +222,9 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 ## DualSPHysics: How to pass Actions to Ascent ?
 
 <div class="flex justify-right">
-<Transform :scale=".8">
+
+<!-- <Transform :scale=".8"> -->
+
 ````md magic-move {lines: true}
 
 ```yaml
@@ -286,21 +277,12 @@ particles) to Ascent for visualization or data extraction at a given timestep.
                                      renders: 
                                        r1: 
                                          image_prefix: "ascent_out/density."
-                                         image_width: 1920
-                                         image_height: 1080
-                                         camera: 
-                                           look_at: [1.35661780169381, 1.38117219796328, -0.24396172179603]
-                                           position: [-0.287688321338078, -1.45228141028134, 0.88710322932479]
-                                           up: [0.20434332985957, 0.258323616399011, 0.944199508977017]
-                                           zoom: 2.25
-                                         bg_color: [1.0, 1.0, 1.0]
-                                         fg_color: [0.0, 0.0, 0.0]
-                                         dataset_bounds: [0.0, 1.0, 0.0, 0.25, 0.0, 0.25]
-                                         color_bar_position: [0.2, 0.9, -0.9, -0.75]
+                                         ... plus camera settings ...
 ```
 ````
 
-</Transform>
+<!-- </Transform> -->
+
 </div>
 
 <!-- /Users/piccinal/CSCS/OO/dualsph/density/CaseDambreak_4.0_0.0045+ascent/simple_trigger_actions.yaml -->
@@ -376,34 +358,34 @@ extensively studied in recent years -->
 
 ```cpp {1-13|14-25|*}
 void Execute(DataType& d, long startIndex, long endIndex) {
-  conduit::Node mesh;
-  mesh["coordsets/coords/type"] = "explicit";
-  mesh["coordsets/coords/values/x"].set_external(get<"x">(d).data() + startIndex, endIndex - startIndex);
-  mesh["coordsets/coords/values/y"].set_external(get<"y">(d).data() + startIndex, endIndex - startIndex);
-  mesh["coordsets/coords/values/z"].set_external(get<"z">(d).data() + startIndex, endIndex - startIndex);
+  conduit::Node mymesh;
+  mymesh["coordsets/coords/type"] = "explicit";
+  mymesh["coordsets/coords/values/x"].set_external(get<"x">(d).data() + startIndex, endIndex - startIndex);
+  mymesh["coordsets/coords/values/y"].set_external(get<"y">(d).data() + startIndex, endIndex - startIndex);
+  mymesh["coordsets/coords/values/z"].set_external(get<"z">(d).data() + startIndex, endIndex - startIndex);
 
-  mesh["topologies/mesh/type"] = "unstructured";
+  mymesh["topologies/mesh/type"] = "unstructured";
   std::vector<conduit_int32> conn(endIndex - startIndex); // CONNECTIVITY_LIST
   std::iota(conn.begin(), conn.end(), 0);
-  mesh["topologies/mesh/elements/connectivity"].set(conn);
-  mesh["topologies/mesh/elements/shape"] = "point";
-  mesh["topologies/mesh/coordset"] = "coords";
+  mymesh["topologies/mesh/elements/connectivity"].set(conn);
+  mymesh["topologies/mesh/elements/shape"] = "point";
+  mymesh["topologies/mesh/coordset"] = "coords";
 
-  addField(mesh, "x", get<"x">(d).data(), startIndex, endIndex);
-  addField(mesh, "y", get<"y">(d).data(), startIndex, endIndex);
-  addField(mesh, "z", get<"z">(d).data(), startIndex, endIndex);
-  addField(mesh, "Density", get<"rho">(d).data(), startIndex, endIndex);
+  addField(mymesh, "x", get<"x">(d).data(), startIndex, endIndex);
+  addField(mymesh, "y", get<"y">(d).data(), startIndex, endIndex);
+  addField(mymesh, "z", get<"z">(d).data(), startIndex, endIndex);
+  addField(mymesh, "Density", get<"rho">(d).data(), startIndex, endIndex);
   
-void addField(conduit::Node& mesh, const std::string& name, FieldType* field, size_t start, size_t end)
+void addField(conduit::Node& mymesh, const std::string& name, FieldType* field, size_t start, size_t end)
 {
-    mesh["fields/" + name + "/association"] = "vertex";
-    mesh["fields/" + name + "/topology"]    = "mesh";
-    mesh["fields/" + name + "/values"].set_external(field + start, end - start);
-    mesh["fields/" + name + "/volume_dependent"].set("false");
+    mymesh["fields/" + name + "/association"] = "vertex";
+    mymesh["fields/" + name + "/topology"]    = "mesh";
+    mymesh["fields/" + name + "/values"].set_external(field + start, end - start);
+    mymesh["fields/" + name + "/volume_dependent"].set("false");
 }
 
   ascent::Ascent myactions;
-  myactions.publish(mesh);
+  myactions.publish(mymesh);
 ```
 ````
 
@@ -428,7 +410,7 @@ Ascent accepts Conduit Mesh Blueprint data
 
 ````md magic-move {lines: true}
 
-```yaml {1-16|*}
+```yaml {1-5|6-16|*}
 - action: "add_triggers"
   triggers:
     t1:
@@ -530,29 +512,26 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 
 ---
 
-## Conclusion
+#### Conclusion
 
 - Open issues remain to be fixed but production runs are possible
 
-## Next steps
-
-* Viskores instead of VTK-m
-* Continue tests with DualPhysics (1 out of 150 examples tested)
-* ROCm AMD GPUs support
-
-
-<div class="flex justify-center">
+<div class="flex justify-left">
 <small>https://www.cscs.ch/science/computer-science-hpc/</small>
 </div>
 <div class="flex justify-center">
 <video width="480" height="260" controls>
   <source src="/src/videos/jupiter.mp4" type="video/mp4">
 </video>
-<img src="/src/images/thankyou.png" class="h-30 ml-20 mr-1">
+<img src="/src/images/thankyou.png" class="h-35 ml-20 mr-1">
 </div>
 
 
+#### Next steps
 
+* Viskores instead of VTK-m
+* Continue testing with SPH-EXA and DualPhysics (1 out of 150 examples tested)
+* ROCm AMD GPUs support
 
 <!-- }}} -->
 <!-- {{{ References -->

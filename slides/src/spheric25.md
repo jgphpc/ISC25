@@ -303,9 +303,9 @@ particles) to Ascent for visualization or data extraction at a given timestep.
   <small> Time evolution of density in a thin slice of the domain:
   A spherical cloud of cold gas, initially at rest, 
   is swept by a low-density stream of gas (wind) moving supersonically.
-  Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud.<br>
-  This simulation was run with the SPH-EXA code on CSCS Alps system.
-  García-Senz D., Cabezón R. and Jose A. Escartín J. A., 10.1051/0004-6361/202141877
+  Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud
+  (García-Senz D., Cabezón R. and Jose A. Escartín., 10.1051/0004-6361/202141877).
+  This simulation was run with the SPH=EXA (https://github.com/sphexa-org/sphexa.git) code on the CSCS Alps system.
   </small>
 </div>
 <!-- }}}-->

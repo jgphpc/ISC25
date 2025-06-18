@@ -225,6 +225,8 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 
 <!-- <Transform :scale=".8"> -->
 
+<br>
+
 ````md magic-move {lines: true}
 
 ```yaml
@@ -244,7 +246,7 @@ particles) to Ascent for visualization or data extraction at a given timestep.
   pipelines:                     scenes: 
     pl_threshold_thin_clip_y:      s1: 
       f1:                            plots: 
-        type: "threshold"              p2: 
+        type: "threshold"              p1:
         params:                          type: "pseudocolor"
           field: "y"                     field: "rhop"
           min_value: 0.01                pipeline: "pl_threshold_thin_clip_y"
@@ -261,23 +263,18 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 - action: "add_pipelines"      - action: "add_scenes"
   pipelines:                     scenes: 
     pl_threshold_thin_clip_y:      s1: 
-      f1:                            plots: 
-        type: "threshold"              p2: 
-        params:                          type: "pseudocolor"
-          field: "y"                     field: "rhop"
-          min_value: 0.01                pipeline: "pl_threshold_thin_clip_y"
-          max_value: 1000                min_value: 0
-                                         max_value: 2
-                                         color_table: 
-                                           name: "Yellow - Gray - Blue"
-                                           annotation: "true"
-                                         points: 
+      f1:                            plots:                                    renders: 
+        type: "threshold"              p1:                                       r1: 
+        params:                          type: "pseudocolor"                       image_prefix: "ascent_out/density."
+          field: "y"                     field: "rhop"                             image_width: 1920
+          min_value: 0.01                pipeline: "pl_threshold_thin_clip_y"      image_height: 1080
+          max_value: 1000                min_value: 0                              camera: ...
+                                         max_value: 2                              bg_color: [1.0, 1.0, 1.0]
+                                         color_table:                              fg_color: [0.0, 0.0, 0.0]
+                                           name: "Yellow - Gray - Blue"            dataset_bounds: [0.0, 1.0, 0.0, ...]
+                                           annotation: "true"                      color_bar_position: [0.2, 0.9, ...]
+                                         points:
                                            radius: 0.002
-
-                                     renders: 
-                                       r1: 
-                                         image_prefix: "ascent_out/density."
-                                         ... plus camera settings ...
 ```
 ````
 
@@ -492,7 +489,7 @@ cavity for the high-density cloud.
 </div>
 
 <div class="flex justify-center">
-    <img src="/src/images/soa.png" class="h-45 ml-1 mr-1">
+    <img src="/src/images/soa.png" class="h-45 ml-19 mr-1">
     <!-- <img src="/src/images/dummysph_summary.png" class="h-99 ml-1 mr-1"> -->
 </div>
 

@@ -1,0 +1,43 @@
+/capstor/scratch/cscs/piccinal/santis/sph/dualsph/DAMBREAK
+cat simple_trigger_actions.yaml
+
+-
+  action: "add_pipelines"
+  pipelines:
+    pl_threshold_thin_clip_y:
+      f1:
+        type: "threshold"
+        params:
+          field: "y"
+          min_value: 0.01
+          max_value: 1000
+-
+  action: "add_scenes"
+  scenes:
+    s1:
+      plots:
+        p2:
+          type: "pseudocolor"
+          field: "rhop"
+          pipeline: "pl_threshold_thin_clip_y"
+          min_value: 0
+          max_value: 2
+          color_table:
+            name: "Yellow - Gray - Blue"
+            annotation: "true"
+          points:
+            radius: 0.002
+      renders:
+        r1:
+          image_prefix: "ascent_out/density."
+          image_width: 1920
+          image_height: 1080
+          camera:
+            look_at: [1.35661780169381, 1.38117219796328, -0.24396172179603]
+            position: [-0.287688321338078, -1.45228141028134, 0.88710322932479]
+            up: [0.20434332985957, 0.258323616399011, 0.944199508977017]
+            zoom: 2.25
+          bg_color: [1.0, 1.0, 1.0]
+          fg_color: [0.0, 0.0, 0.0]
+          dataset_bounds: [0.0, 1.0, 0.0, 0.25, 0.0, 0.25]
+          color_bar_position: [0.2, 0.9, -0.9, -0.75]

@@ -23,10 +23,14 @@ In-situ Visualization to the rescue 🛟<br>
 </div>
 
 <!-- 
-El Capitan = \#1 = 43,808 AMD Instinct MI300A GPUs
-Frontier = \#2 =   37,632 AMD Instinct MI250X GPUs
-Aurora = \#3 =     63,744 Intel Max Series GPUs
-Jupiter B = \#4 = ~24,000 Hopper H100 GPU
+55e9 * 18x = 10^12
+
+El Capitan = \#1 = 43'808 AMD Instinct MI300A GPUs
+Frontier = \#2 =   37'632 AMD Instinct MI250X GPUs
+Aurora = \#3 =     63'744 Intel Max Series GPUs
+Jupiter B = \#4 = ~24'000 Hopper H100 GPUs
+LUMI-G = 2978 * 4 = 11\'912 MI250x GPUs
+LUMI-G hardware partition consists of 2978 nodes with 4 AMD MI250x GPUs
 etc...
 
 - gain insights into their simulations as early as possible
@@ -296,41 +300,26 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 
 ---
 
-# Wind-Cloud collision test
-
-This test$^{[1]}$ simulates a spherical cloud of cold gas,
-initially at rest, swept by a low-density stream of gas (wind) moving supersonically.
+### Wind-Cloud collision test
 
 <div class="flex justify-center">
   <img src="/src/images/SPH-EXA_logo.png" class="h-6 ml-5 mr-1">
- <video width="384" height="216" controls>
+ <video width="640" height="360" controls>
   <source src="/src/videos/sphexa-density.mp4" type="video/mp4">
 </video>
 </div>
 
-<!--
-320 x 240
-384 x 216
-480 x 270
-1920x1080
-:Width  : 1 920 pixels
-:Height : 1 080 pixels
--->
-
-<small>
-```
-             Time evolution of density in a thin slice of the domain,
-             Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud.
-             This simulation was run with the SPH-EXA code on CSCS Alps system.
-```
-</small>
-
 <div class="absolute bottom-0 left-0 p-12 w-full text-sm text-gray-500">
-  <small>[1] García-Senz D., Cabezón R. and Jose A. Escartín J. A.,
-  Conservative, density-based smoothed particle hydrodynamics with improved
-  partition of the unity and better estimation of gradients, in Astronomy &
-  Astrophysics, 10.1051/0004-6361/202141877</small>
+  <small> Time evolution of density in a thin slice of the domain:
+  A spherical cloud of cold gas, initially at rest, 
+  is swept by a low-density stream of gas (wind) moving supersonically.
+  Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud.<br>
+  This simulation was run with the SPH-EXA code on CSCS Alps system.
+  García-Senz D., Cabezón R. and Jose A. Escartín J. A., 10.1051/0004-6361/202141877
+  </small>
 </div>
+<!-- }}}-->
+<!-- {{{ SPH-EXA test failover -->
 
 ---
 
@@ -425,6 +414,7 @@ Ascent accepts Conduit Mesh Blueprint data
 
 <div class="flex justify-left">
 <Transform :scale=".75">
+
 ````md magic-move {lines: true}
 
 ```yaml {1-16|*}
@@ -461,6 +451,7 @@ Ascent accepts Conduit Mesh Blueprint data
                       radius: 0.002                             radius: 0.002                           elevation: 25.0
                                                                                                         zoom: 5.25
 ```
+````
 </Transform>
 </div>
 

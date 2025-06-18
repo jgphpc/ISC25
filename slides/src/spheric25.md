@@ -1,9 +1,27 @@
 <!-- {{{ Why ? -->
 # Back-of-the-envelope SPH
 
+<!-- 
+55e9 * 18x = 10^12
+
+El Capitan = \#1 = 43'808 AMD Instinct MI300A GPUs
+Frontier = \#2 =   37'632 AMD Instinct MI250X GPUs
+Aurora = \#3 =     63'744 Intel Max Series GPUs
+150 000 GPUs
+Jupiter B = \#4 = ~24'000 Hopper H100 GPUs
+LUMI-G = 2978 * 4 = 11\'912 MI250x GPUs
+LUMI-G hardware partition consists of 2978 nodes with 4 AMD MI250x GPUs
+CSCS = 10752
+24000+11912+10752 = 46 664
+etc...
+-->
+
 <Transform :scale="1.2">
 
-$10000^3$ particles simulation is within reach<br>(SPH-EXA, 2 000 GPUs, 1/2 billion particles per GPU)<br>
+🇺🇸LLNL+ORNL+ANL = 150 000 GPUs, 🇪🇺LUMI+JSC+CSCS = 50 000 GPUs<br>
+$10000^3$ particles simulation is within reach<br>
+(SPH-EXA, 2 000 GPUs, 1/2 billion particles per GPU)<br>
+LUMI-G has 
 Saving 50 checkpoint files per simulation:
 
 </Transform>
@@ -12,27 +30,20 @@ Saving 50 checkpoint files per simulation:
 <Transform :scale="1.3">
 
 $10^{12}$ particles $\times$ 50 $\times$ 76 bytes per particle<br>
-~ 3.5 PB 💾 (<5% of CSCS 91 PB scratch filesystem)<br><br>
+~ 3.5 PB 💾 (<5% of CSCS 91 PB scratch filesystem)<br>
+
 $\times$ Average write speed at 200 GB/s<br>
-~ almost 5 hours writing 50 output files ⏳️ ("wasting" 10 000 GPU hours)<br><br>
+~ almost 5 hours writing 50 output files ⏳️ ("wasting" 10 000 GPU hours)<br>
+
 $\times$ Long term storage at 60 EUR / TB / year<br>
-~ 210 000 💶 (per year)<br><br>
-In-situ Visualization to the rescue 🛟<br>
+~ 210 000 💶 (per year)<br>
+$\rightarrow$ In-situ Visualization to the rescue 🛟
 
 </Transform>
 </div>
 
+
 <!-- 
-55e9 * 18x = 10^12
-
-El Capitan = \#1 = 43'808 AMD Instinct MI300A GPUs
-Frontier = \#2 =   37'632 AMD Instinct MI250X GPUs
-Aurora = \#3 =     63'744 Intel Max Series GPUs
-Jupiter B = \#4 = ~24'000 Hopper H100 GPUs
-LUMI-G = 2978 * 4 = 11\'912 MI250x GPUs
-LUMI-G hardware partition consists of 2978 nodes with 4 AMD MI250x GPUs
-etc...
-
 - gain insights into their simulations as early as possible
 - faster with flash drives (ssd), amr, compression, AI, etc...
 - https://io500.org/list/sc24/ten-production -> average=94, \#2=200 GiB/s, \#1=734 GiB/s

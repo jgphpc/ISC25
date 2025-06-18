@@ -8,7 +8,7 @@ title: '19th SPHERIC World Conference'
 info: |
   https://spheric2025.upc.edu
 
-  https://jgphpc.github.io/ISC25/SPHERIC25/1
+  https://jgphpc.github.io/ISC25/SPHERIC25/
 favicon: /images/cscs.ico
 # apply unocss classes to the current slide
 # class: text-center
@@ -35,7 +35,7 @@ hideInToc: true
 
 ## In-situ Visualization for SPH Simulations
 
-Jean-Guillaume Piccinali$^{\propto}$, Jean M. Favre$^{\propto}$, Rubén Cabezón$^\rho$<br>
+<span v-mark.underline.yellow>Jean-Guillaume Piccinali</span>$^{\propto}$, Jean M. Favre$^{\propto}$, Rubén Cabezón$^\rho$<br>
 <small>Swiss National Supercomputing Centre$^{\propto}$, University of Basel$^\rho$</small><br>
 
 19th SPHERIC World Conference<br>

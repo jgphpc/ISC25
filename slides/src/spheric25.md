@@ -540,6 +540,7 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 * Continue tests with DualPhysics (1 out of 150 examples tested)
 * ROCm AMD GPUs support
 
+
 <div class="flex justify-center">
 <small>https://www.cscs.ch/science/computer-science-hpc/</small>
 </div>
@@ -547,7 +548,9 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 <video width="480" height="260" controls>
   <source src="/src/videos/jupiter.mp4" type="video/mp4">
 </video>
+<img src="/src/images/thankyou.png" class="h-30 ml-20 mr-1">
 </div>
+
 
 
 

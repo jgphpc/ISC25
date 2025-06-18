@@ -136,6 +136,11 @@ NO! ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg
 </video>
 </div>
 
+<div class="absolute bottom-0 left-0 p-10 w-full text-sm text-gray-500">
+  <small> This simulation was run with DualSPHysics/5.4 on the CSCS Alps system.
+  </small>
+</div>
+
 ---
 
 # 3-D dam break test (failover)
@@ -232,7 +237,7 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 ```yaml
 - action: "add_pipelines"      
   pipelines:                   
-    pl_threshold_thin_clip_y:  
+    pl_threshold_y:  
       f1:                      
         type: "threshold"      
         params:                
@@ -244,12 +249,12 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 ```yaml
 - action: "add_pipelines"      - action: "add_scenes"
   pipelines:                     scenes: 
-    pl_threshold_thin_clip_y:      s1: 
+    pl_threshold_y:      s1: 
       f1:                            plots: 
         type: "threshold"              p1:
         params:                          type: "pseudocolor"
           field: "y"                     field: "rhop"
-          min_value: 0.01                pipeline: "pl_threshold_thin_clip_y"
+          min_value: 0.01                pipeline: "pl_threshold_y"
           max_value: 1000                min_value: 0
                                          max_value: 2
                                          color_table: 
@@ -262,12 +267,12 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 ```yaml
 - action: "add_pipelines"      - action: "add_scenes"
   pipelines:                     scenes: 
-    pl_threshold_thin_clip_y:      s1: 
+    pl_threshold_y:      s1: 
       f1:                            plots:                                    renders: 
         type: "threshold"              p1:                                       r1: 
         params:                          type: "pseudocolor"                       image_prefix: "ascent_out/density."
           field: "y"                     field: "rhop"                             image_width: 1920
-          min_value: 0.01                pipeline: "pl_threshold_thin_clip_y"      image_height: 1080
+          min_value: 0.01                pipeline: "pl_threshold_y"      image_height: 1080
           max_value: 1000                min_value: 0                              camera: ...
                                          max_value: 2                              bg_color: [1.0, 1.0, 1.0]
                                          color_table:                              fg_color: [0.0, 0.0, 0.0]

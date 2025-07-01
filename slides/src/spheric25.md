@@ -142,7 +142,7 @@ NO! ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg
 </div>
 
 ---
-
+<!--
 # 3-D dam break test (failover)
 
 This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
@@ -151,7 +151,7 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
   <img src="/src/images/dualsph-logo.png" class="h-20 ml-5 mr-1">
   <img src="/src/images/dualsphysics_dambreak.png" class="h-90 ml-1">
 </div>
-
+-->
 
 <!-- }}} -->
 <!-- {{{ MESH -->
@@ -226,11 +226,14 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 
 ## DualSPHysics: How to pass Actions to Ascent ?
 
+<br>
+
+`thresholding`: only keep particles whose value is between a min/max threshold (0.01 and 1000)<br>
+A way to remove particles with density outside a given range.
+
 <div class="flex justify-right">
 
 <!-- <Transform :scale=".8"> -->
-
-<br>
 
 ````md magic-move {lines: true}
 
@@ -249,7 +252,7 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 ```yaml
 - action: "add_pipelines"      - action: "add_scenes"
   pipelines:                     scenes: 
-    pl_threshold_y:      s1: 
+    pl_threshold_y:                s1: 
       f1:                            plots: 
         type: "threshold"              p1:
         params:                          type: "pseudocolor"
@@ -267,12 +270,12 @@ particles) to Ascent for visualization or data extraction at a given timestep.
 ```yaml
 - action: "add_pipelines"      - action: "add_scenes"
   pipelines:                     scenes: 
-    pl_threshold_y:      s1: 
+    pl_threshold_y:                s1: 
       f1:                            plots:                                    renders: 
         type: "threshold"              p1:                                       r1: 
         params:                          type: "pseudocolor"                       image_prefix: "ascent_out/density."
           field: "y"                     field: "rhop"                             image_width: 1920
-          min_value: 0.01                pipeline: "pl_threshold_y"      image_height: 1080
+          min_value: 0.01                pipeline: "pl_threshold_y"                image_height: 1080
           max_value: 1000                min_value: 0                              camera: ...
                                          max_value: 2                              bg_color: [1.0, 1.0, 1.0]
                                          color_table:                              fg_color: [0.0, 0.0, 0.0]
@@ -310,44 +313,10 @@ particles) to Ascent for visualization or data extraction at a given timestep.
   is swept by a low-density stream of gas (wind) moving supersonically.
   Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud
   (García-Senz D., Cabezón R. and Jose A. Escartín., 10.1051/0004-6361/202141877).
-  This simulation was run with the SPH=EXA (https://github.com/sphexa-org/sphexa.git) code on the CSCS Alps system.
+  This simulation was run with the SPH-EXA (https://github.com/sphexa-org/sphexa.git) code on the CSCS Alps system.
   </small>
 </div>
 <!-- }}}-->
-<!-- {{{ SPH-EXA test failover -->
-
----
-
-# Wind-Cloud collision test (failover)
-
-This test$^{[1]}$ simulates a spherical cloud of cold gas,
-initially at rest, swept by a low-density stream of gas (wind) moving supersonically.
-
-<div class="flex justify-left">
-  <img src="/src/images/SPH-EXA_logo.png" class="h-6 ml-5 mr-1">
-  <img src="/src/images/density301.01000.png" class="h-55 ml-1">
-  <img src="/src/images/density301.03500.png" class="h-55 ml-1">
-</div>
-
-<small>
-```
-             Time evolution of density in a thin slice of the domain,
-             Kelvin–Helmholtz instabilities are able to develop, mix and eventually destroy the cloud.
-             This simulation was run with the SPH-EXA code on CSCS Alps system.
-```
-</small>
-
-<div class="absolute bottom-0 left-0 p-12 w-full text-sm text-gray-500">
-  <small>[1] García-Senz D., Cabezón R. and Jose A. Escartín J. A.,
-  Conservative, density-based smoothed particle hydrodynamics with improved
-  partition of the unity and better estimation of gradients, in Astronomy &
-  Astrophysics, 10.1051/0004-6361/202141877</small>
-</div>
-
-<!-- Large scale production test is an astrophysical problem that has been
-extensively studied in recent years -->
-
-<!-- }}} -->
 <!-- {{{ MESH -->
 
 ---
@@ -421,7 +390,7 @@ Ascent accepts Conduit Mesh Blueprint data
         actions:
           - action: "add_pipelines"
             pipelines:
-              pl_threshold_thin_clip_z:     pl_threshold_thin_clip_y:   
+              pl_threshold_thin_clip_z:     pl_threshold_thin_clip_y: // keep particles between 0.12425 and 0.12575 (both y and z)
                 f1:                           f1:                       
                   type: "threshold"             type: "threshold"       
                   params:                       params:                 
@@ -429,13 +398,13 @@ Ascent accepts Conduit Mesh Blueprint data
                     min_value: 0.12425            min_value: 0.12425    
                     max_value: 0.12575            max_value: 0.12575    
                                                                         
-          - action: "add_scenes"                                        
-            scenes:                                                     
-              s1:                                                       
-                plots:                                                                      
+          - action: "add_scenes" // Generate pseudocolor plot of Density field in the slices
+            scenes:
+              s1:
+                plots:
                   p1:                                       p2:                                   renders:
                     type: "pseudocolor"                       type: "pseudocolor"                   r1:
-                    field: "Density"                      field: "Density"                    image_prefix: "datasets/Density.%05d"
+                    field: "Density"                      field: "Density"                            image_prefix: "datasets/Density.%05d"
                     pipeline: "pl_threshold_thin_clip_z"      pipeline: "pl_threshold_thin_clip_y"    image_width: 1920
                     min_value: 1                              min_value: 1                            image_height: 1080
                     max_value: 10                             max_value: 10                           camera:
@@ -533,7 +502,7 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 
 * Viskores instead of VTK-m
 * Continue testing with SPH-EXA and DualPhysics (1 out of 150 examples tested)
-* ROCm AMD GPUs support
+* Improve NVIDIA GH200 GPUs performance and test ROCm AMD GPUs support
 
 <!-- }}} -->
 <!-- {{{ References -->

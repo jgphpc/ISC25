@@ -140,9 +140,11 @@ NO! ffmpeg -r 25 -i density-000%03d.png -vb 20M eff.mpg
   <small> This simulation was run with DualSPHysics/5.4 on the CSCS Alps system.
   </small>
 </div>
-
----
+<!-- }}} -->
+<!-- {{{ failover -->
 <!--
+---
+
 # 3-D dam break test (failover)
 
 This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $10^6$ particles)
@@ -152,7 +154,6 @@ This test simulates a 3-D dam break flow impacting on a structure (dp=0.0045, $1
   <img src="/src/images/dualsphysics_dambreak.png" class="h-90 ml-1">
 </div>
 -->
-
 <!-- }}} -->
 <!-- {{{ MESH -->
 
@@ -513,14 +514,16 @@ AOS: Array of Structs (DUALSPHYSICS, PKDGRAV3)
 
 <br>
 
-- https://vtk.org, https://vtk-m.readthedocs.io, https://viskores.readthedocs.io
-- https://ascent.readthedocs.io
-- https://kitware.github.io/paraview-catalyst/ 
-- https://github.com/llnl/conduit.git
+- In situ libraries:
+  - https://vtk.org, https://vtk-m.readthedocs.io, https://viskores.readthedocs.io
+  - https://ascent.readthedocs.io
+  - https://kitware.github.io/paraview-catalyst/ 
+  - https://github.com/llnl/conduit.git
 
-- https://github.com/sphexa-org/sphexa.git
-- https://github.com/DualSPHysics/DualSPHysics.git
-- https://github.com/jfavre/DummySPH.git 
+- Apps:  
+  - https://github.com/sphexa-org/sphexa.git
+  - https://github.com/DualSPHysics/DualSPHysics.git
+  - https://github.com/jfavre/DummySPH.git 
 
 
 <!-- 
